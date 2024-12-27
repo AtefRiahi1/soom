@@ -40,7 +40,7 @@ public class Entreprise implements UserDetails {
     @JsonBackReference
     private List<Employe> employes;
 
-    @OneToMany(mappedBy = "notification", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
     @Override

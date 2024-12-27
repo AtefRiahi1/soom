@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @ToString
+@Table(name = "moduleemployes")
 public class ModuleEmploye {
 
     @Id
@@ -23,17 +24,17 @@ public class ModuleEmploye {
     @JoinColumn(name = "module_id", nullable = false)
     private Module module;
 
-    private boolean read;
-    private boolean write;
-    private boolean create;
-    private boolean delete;
+    private boolean consulter;
+    private boolean modifier;
+    private boolean ajouter;
+    private boolean supprimer;
 
     public ModuleEmploye(Employe employe, Module module) {
         this.employe = employe;
         this.module = module;
-        this.read = true;
-        this.write = false;
-        this.create = false;
-        this.delete = false;
+        this.consulter = true;
+        this.modifier = false;
+        this.ajouter = false;
+        this.supprimer = false;
     }
 }
