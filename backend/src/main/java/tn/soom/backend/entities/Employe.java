@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -26,7 +27,6 @@ public class Employe implements UserDetails {
     @Column(unique = true)
     private String email;
     private String password;
-    private String role;
     private boolean isverified=false;
 
     private LocalDateTime createdAt;
@@ -43,9 +43,14 @@ public class Employe implements UserDetails {
     @ToString.Exclude
     private List<EmployeSession> employeSessions;
 
+    @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ModuleEmploye> modules;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role));
+        return modules.stream()
+                .map(moduleEmploye -> new SimpleGrantedAuthority(moduleEmploye.getModule().getNom().toUpperCase()))
+                .collect(Collectors.toList());
     }
 
 
