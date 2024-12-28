@@ -32,7 +32,6 @@ public class Entreprise implements UserDetails {
     private String role;
     private String logo;
     private boolean isverified=false;
-    private Integer code;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
