@@ -31,7 +31,7 @@ public class Entreprise implements UserDetails {
     private String password;
     private String role;
     private String logo;
-    private boolean isverified=false;
+    private Boolean isverified=false;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

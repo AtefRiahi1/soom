@@ -27,7 +27,7 @@ public class Employe implements UserDetails {
     @Column(unique = true)
     private String email;
     private String password;
-    private boolean isverified=false;
+    private Boolean isverified=false;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

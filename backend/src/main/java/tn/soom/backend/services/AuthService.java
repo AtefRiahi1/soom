@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import tn.soom.backend.dto.ReqRes;
 import tn.soom.backend.dto.SignIn;
 import tn.soom.backend.entities.AdminERP;
 import tn.soom.backend.entities.Employe;
@@ -39,35 +40,45 @@ public class AuthService {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    public String signUpEntreprise(Entreprise entreprise) {
-        if (entrepriseRepo.existsByEmail(entreprise.getEmail())) {
-            throw new IllegalArgumentException("L'entreprise avec cet email existe déjà.");
-        }
+    public ReqRes signUpEntreprise(Entreprise entreprise) {
+        ReqRes resp = new ReqRes();
+        try {
+            if (entrepriseRepo.existsByEmail(entreprise.getEmail())) {
+                throw new IllegalArgumentException("L'entreprise avec cet email existe déjà.");
+            }
 
-        entreprise.setPassword(passwordEncoder.encode(entreprise.getPassword()));
+            entreprise.setPassword(passwordEncoder.encode(entreprise.getPassword()));
 
-        entreprise.setIsverified(false);
+            entreprise.setIsverified(false);
 
-        Entreprise savedEntreprise = entrepriseRepo.save(entreprise);
+            Entreprise savedEntreprise = entrepriseRepo.save(entreprise);
+            resp.setEntreprise(savedEntreprise);
+            resp.setMessage("Enregistrement réussi. Un email de vérification a été envoyé à votre adresse.");
+            resp.setStatusCode(200);
 
-        String token = jwtUtils.generateToken(savedEntreprise);
+            String token = jwtUtils.generateToken(savedEntreprise);
 
-        String verificationUrl = "http://example.com/verify?token=" + token;
+            String verificationUrl = "http://localhost:9090/auth/verify?token=" + token;
 
-        String emailTemplate = "<html>" +
-                "<body>" +
-                "<h1>Bienvenue sur notre plateforme, " + savedEntreprise.getName() + " !</h1>" +
-                "<p>Veuillez cliquer sur le lien suivant pour vérifier votre compte :</p>" +
-                "<a href=\"" + verificationUrl + "\">Vérifiez votre compte</a>" +
-                "</body>" +
-                "</html>";
+            String emailTemplate = "<html>" +
+                    "<body>" +
+                    "<h1>Bienvenue sur notre plateforme, " + savedEntreprise.getName() + " !</h1>" +
+                    "<p>Veuillez cliquer sur le lien suivant pour vérifier votre compte :</p>" +
+                    "<a href=\"" + verificationUrl + "\">Vérifiez votre compte</a>" +
+                    "</body>" +
+                    "</html>";
 
-        emailService.sendEmail(savedEntreprise.getEmail(), "Confirmation de vérification de compte", emailTemplate);
+            emailService.sendEmail(savedEntreprise.getEmail(), "Confirmation de vérification de compte", emailTemplate);
 
-        return "Enregistrement réussi. Un email de vérification a été envoyé à votre adresse.";
+        }catch (Exception e){
+                resp.setStatusCode(500);
+                resp.setError(e.getMessage());
+            }
+            return resp;
     }
 
-    public String signIn(SignIn signIn) {
+    public ReqRes signIn(SignIn signIn) {
+        ReqRes response = new ReqRes();
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(signIn.getEmail(), signIn.getPassword())
@@ -79,29 +90,56 @@ public class AuthService {
             if (adminERP.isPresent()) {
                 var jwt = jwtUtils.generateToken(adminERP.get());
                 var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), adminERP.get());
-                return "Bienvenue AdminERP " + adminERP.get().getEmail() + " token:" + jwt;
+                response.setStatusCode(200);
+                response.setToken(jwt);
+                response.setRefreshToken(refreshToken);
+                response.setExpirationTime("24Hr");
+                response.setMessage("Bienvenue AdminERP " + adminERP.get().getEmail());
+                response.setUserType("admin");
             }
 
             Optional<Entreprise> entreprise = entrepriseRepo.findByEmail(signIn.getEmail());
             if (entreprise.isPresent()) {
-                var jwt = jwtUtils.generateToken(entreprise.get());
-                var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), entreprise.get());
-                return "Bienvenue Entreprise " + entreprise.get().getName() + " token:" + jwt;
+                if (entreprise.get().getIsverified()) {
+                    var jwt = jwtUtils.generateToken(entreprise.get());
+                    var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), entreprise.get());
+                    response.setStatusCode(200);
+                    response.setToken(jwt);
+                    response.setRefreshToken(refreshToken);
+                    response.setExpirationTime("24Hr");
+                    response.setMessage("Bienvenue Entreprise " + entreprise.get().getName());
+                    response.setUserType("entreprise");
+                } else {
+                    response.setStatusCode(403);
+                    response.setError("Votre compte d'entreprise n'est pas vérifié.");
+                }
             }
 
             Optional<Employe> employe = employeRepo.findByEmail(signIn.getEmail());
             if (employe.isPresent()) {
-                var jwt = jwtUtils.generateToken(employe.get());
-                var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), employe.get());
-                return "Bienvenue Employé " + employe.get().getEmail() + " token:" + jwt;
+                if (employe.get().getIsverified()) {
+                    var jwt = jwtUtils.generateToken(employe.get());
+                    var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), employe.get());
+                    response.setStatusCode(200);
+                    response.setToken(jwt);
+                    response.setRefreshToken(refreshToken);
+                    response.setExpirationTime("24Hr");
+                    response.setMessage("Bienvenue Employé " + employe.get().getEmail());
+                    response.setUserType("employé");
+                } else {
+                    response.setStatusCode(403);
+                    response.setError("Votre compte d'employé n'est pas vérifié.");
+                }
             }
 
         } catch (BadCredentialsException e) {
-            return "Erreur d'authentification : Email ou mot de passe incorrect.";
+            response.setStatusCode(500);
+            response.setError(e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException("Échec de l'authentification", e);
+            response.setStatusCode(500);
+            response.setError(e.getMessage());
         }
-        return "Aucun utilisateur trouvé avec ces informations.";
+        return response;
     }
 
 

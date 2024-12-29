@@ -33,7 +33,6 @@ public class EmployeSession {
 
     private LocalDateTime sessionEnd;
 
-    private String ipAddress;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
