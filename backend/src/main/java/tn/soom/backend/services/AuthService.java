@@ -13,9 +13,11 @@ import tn.soom.backend.dto.SignIn;
 import tn.soom.backend.entities.AdminERP;
 import tn.soom.backend.entities.Employe;
 import tn.soom.backend.entities.Entreprise;
+import tn.soom.backend.entities.Notification;
 import tn.soom.backend.repositories.AdminERPRepo;
 import tn.soom.backend.repositories.EmployeRepo;
 import tn.soom.backend.repositories.EntrepriseRepo;
+import tn.soom.backend.repositories.NotificationRepo;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -29,6 +31,8 @@ public class AuthService {
     private AdminERPRepo adminERPRepo;
     @Autowired
     private EntrepriseRepo entrepriseRepo;
+    @Autowired
+    private NotificationRepo notificationRepo;
     @Autowired
     private JWTUtils jwtUtils;
     @Autowired
@@ -57,7 +61,6 @@ public class AuthService {
             resp.setStatusCode(200);
 
             String token = jwtUtils.generateToken(savedEntreprise);
-
             String verificationUrl = "http://localhost:9090/auth/verify?token=" + token;
 
             String emailTemplate = "<html>" +
@@ -67,15 +70,26 @@ public class AuthService {
                     "<a href=\"" + verificationUrl + "\">Vérifiez votre compte</a>" +
                     "</body>" +
                     "</html>";
-
             emailService.sendEmail(savedEntreprise.getEmail(), "Confirmation de vérification de compte", emailTemplate);
 
-        }catch (Exception e){
-                resp.setStatusCode(500);
-                resp.setError(e.getMessage());
+            AdminERP admin = adminERPRepo.findByRole("ADMIN");
+            if (admin!= null) {
+                Notification notification = new Notification();
+                notification.setTitle("Nouvelle entreprise crée");
+                notification.setMessage("Une nouvelle entreprise, " + savedEntreprise.getName() + ", a été crée.");
+                notification.setCreatedBy(savedEntreprise.getName());
+                notification.setAdminERP(admin);
+                notification.setRead(false);
+                notificationRepo.save(notification);
             }
-            return resp;
+
+        } catch (Exception e) {
+            resp.setStatusCode(500);
+            resp.setError(e.getMessage());
+        }
+        return resp;
     }
+
 
     public ReqRes signIn(SignIn signIn) {
         ReqRes response = new ReqRes();

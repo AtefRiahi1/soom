@@ -1,6 +1,7 @@
 package tn.soom.backend.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,7 +37,7 @@ public class Entreprise implements UserDetails {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "entreprise")
-    @JsonBackReference
+    @JsonIgnore
     private List<Employe> employes;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,5 +1,6 @@
 package tn.soom.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,17 +36,17 @@ public class Employe implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "entreprise_id")
+    @JsonIgnore
     private Entreprise entreprise;
 
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "employe")
-    @ToString.Exclude
     private List<EmployeSession> employeSessions;
 
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ModuleEmploye> modules;
+    private List<ModuleEmploye> modules= new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
