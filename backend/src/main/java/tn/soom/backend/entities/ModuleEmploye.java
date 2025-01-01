@@ -16,6 +16,8 @@ public class ModuleEmploye {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Boolean paye=false;
+    private Boolean status=true;
 
     @ManyToOne
     @JoinColumn(name = "employe_id", nullable = false)

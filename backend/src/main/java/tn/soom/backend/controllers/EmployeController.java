@@ -28,4 +28,26 @@ public class EmployeController {
         List<Employe> employes = employeService.getEmployesByEntrepriseId(entrepriseId);
         return ResponseEntity.ok(employes);
     }
+
+    @PutMapping("/status/{employeId}")
+    public ResponseEntity<Employe> updateEmployeStatus(@PathVariable Integer employeId) {
+        Employe updatedEmploye = employeService.updateEmployeStatus(employeId);
+        return ResponseEntity.ok(updatedEmploye);
+    }
+
+    @PutMapping("/{employeId}")
+    public ResponseEntity<Employe> manageEmployeData(
+            @PathVariable Integer employeId,
+            @RequestBody Employe updateEmploye,
+            @RequestParam List<Integer> addModuleIds,
+            @RequestParam List<Integer> removeModuleIds) {
+
+        Employe updatedEmploye = employeService.manageEmployeData(
+                employeId,
+                updateEmploye,
+                addModuleIds,
+                removeModuleIds
+        );
+        return ResponseEntity.ok(updatedEmploye);
+    }
 }

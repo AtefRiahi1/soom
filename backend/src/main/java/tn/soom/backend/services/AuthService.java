@@ -131,7 +131,7 @@ public class AuthService {
 
             Optional<Employe> employe = employeRepo.findByEmail(signIn.getEmail());
             if (employe.isPresent()) {
-                if (employe.get().getIsverified()) {
+                if (employe.get().getIsverified() && employe.get().getStatus()) {
                     var jwt = jwtUtils.generateToken(employe.get());
                     var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), employe.get());
                     response.setStatusCode(200);

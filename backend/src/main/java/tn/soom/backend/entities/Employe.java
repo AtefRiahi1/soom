@@ -30,7 +30,7 @@ public class Employe implements UserDetails {
     private String email;
     private String password;
     private Boolean isverified=false;
-
+    private Boolean status=true;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -51,6 +51,7 @@ public class Employe implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return modules.stream()
+                .filter(moduleEmploye -> moduleEmploye.getPaye() && moduleEmploye.getStatus())
                 .map(moduleEmploye -> new SimpleGrantedAuthority(moduleEmploye.getModule().getNom().toUpperCase()))
                 .collect(Collectors.toList());
     }
