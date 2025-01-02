@@ -1,10 +1,13 @@
 package tn.soom.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import tn.soom.backend.entities.Employe;
 import tn.soom.backend.entities.ModuleEmploye;
 import tn.soom.backend.repositories.ModuleEmployeRepo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,5 +33,30 @@ public class ModuleEmployeService {
         } else {
             return Optional.empty();
         }
+    }
+
+    public ModuleEmploye updateModuleEmployePaye(Integer moduleemployeId) {
+        ModuleEmploye moduleEmploye = moduleEmployeRepository.findById(moduleemployeId)
+                .orElseThrow(() -> new IllegalArgumentException("Module introuvable avec l'ID : " + moduleemployeId));
+
+        moduleEmploye.setPaye(true);
+        moduleEmploye.setPaymentDate(LocalDateTime.now());
+        return moduleEmployeRepository.save(moduleEmploye);
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void resetModuleEmployePaymentStatus() {
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
+
+        List<ModuleEmploye> modulesToUpdate = moduleEmployeRepository.findAllByPaymentDateBefore(oneMonthAgo);
+
+        for (ModuleEmploye moduleEmploye : modulesToUpdate) {
+            moduleEmploye.setPaye(false);
+            moduleEmploye.setPaymentDate(null);
+        }
+
+        moduleEmployeRepository.saveAll(modulesToUpdate);
+
+        System.out.println("Mise à jour des modules employé effectuée : " + modulesToUpdate.size() + " modules mis à jour.");
     }
 }

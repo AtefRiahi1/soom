@@ -3,6 +3,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -18,6 +20,7 @@ public class ModuleEmploye {
     private Integer id;
     private Boolean paye=false;
     private Boolean status=true;
+    private LocalDateTime paymentDate;
 
     @ManyToOne
     @JoinColumn(name = "employe_id", nullable = false)

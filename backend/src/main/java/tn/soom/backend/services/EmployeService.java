@@ -8,6 +8,7 @@ import tn.soom.backend.entities.Module;
 import tn.soom.backend.repositories.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeService {
@@ -72,6 +73,14 @@ public class EmployeService {
                 .orElseThrow(() -> new IllegalArgumentException("Employé introuvable avec l'ID : " + employeId));
 
         employe.setStatus(!employe.getStatus());
+        return employeRepository.save(employe);
+    }
+
+    public Employe updateEmployeverif(Integer employeId) {
+        Employe employe = employeRepository.findById(employeId)
+                .orElseThrow(() -> new IllegalArgumentException("Employé introuvable avec l'ID : " + employeId));
+
+        employe.setIsverified(!employe.getIsverified());
         return employeRepository.save(employe);
     }
 
@@ -148,4 +157,14 @@ public class EmployeService {
             notificationRepository.save(notification);
     }
 
+    public Employe updateEmployePassword(Integer id, String newPassword) {
+        Optional<Employe> existingEmploye = employeRepository.findById(id);
+        if (existingEmploye.isPresent()) {
+            Employe employe = existingEmploye.get();
+            employe.setPassword(passwordEncoder.encode(newPassword));
+
+            return employeRepository.save(employe);
+        }
+        return null;
+    }
 }

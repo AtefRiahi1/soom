@@ -3,6 +3,7 @@ package tn.soom.backend.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.soom.backend.entities.Employe;
 import tn.soom.backend.entities.ModuleEmploye;
 import tn.soom.backend.services.ModuleEmployeService;
 import tn.soom.backend.services.ModuleService;
@@ -36,6 +37,12 @@ public class ModuleEmployeController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/payment/{moduleemployeId}")
+    public ResponseEntity<ModuleEmploye> updateModuleEmployePaye(@PathVariable Integer moduleemployeId) {
+        ModuleEmploye updatedModuleEmploye = moduleEmployeService.updateModuleEmployePaye(moduleemployeId);
+        return ResponseEntity.ok(updatedModuleEmploye);
     }
 
 }

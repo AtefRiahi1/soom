@@ -3,7 +3,9 @@ package tn.soom.backend.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.soom.backend.dto.UpdatePasswordRequest;
 import tn.soom.backend.entities.Employe;
+import tn.soom.backend.entities.Entreprise;
 import tn.soom.backend.services.EmployeService;
 
 import java.util.List;
@@ -35,6 +37,12 @@ public class EmployeController {
         return ResponseEntity.ok(updatedEmploye);
     }
 
+    @PutMapping("/verif/{employeId}")
+    public ResponseEntity<Employe> updateEmployeVerif(@PathVariable Integer employeId) {
+        Employe updatedEmploye = employeService.updateEmployeverif(employeId);
+        return ResponseEntity.ok(updatedEmploye);
+    }
+
     @PutMapping("/{employeId}")
     public ResponseEntity<Employe> manageEmployeData(
             @PathVariable Integer employeId,
@@ -49,5 +57,23 @@ public class EmployeController {
                 removeModuleIds
         );
         return ResponseEntity.ok(updatedEmploye);
+    }
+
+    @PutMapping("/{id}/updatePassword")
+    public ResponseEntity<Employe> updateEmployePassword(@PathVariable Integer id, @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+        String newPassword = updatePasswordRequest.getNewPassword();
+        System.out.println("New password received: " + newPassword);
+
+        if (newPassword != null && !newPassword.isEmpty()) {
+            Employe updatedEmploye = employeService.updateEmployePassword(id, newPassword);
+
+            if (updatedEmploye != null) {
+                return ResponseEntity.ok(updatedEmploye);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
