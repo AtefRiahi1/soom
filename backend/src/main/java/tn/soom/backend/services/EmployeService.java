@@ -81,6 +81,14 @@ public class EmployeService {
                 .orElseThrow(() -> new IllegalArgumentException("Employé introuvable avec l'ID : " + employeId));
 
         employe.setIsverified(!employe.getIsverified());
+        AdminERP admin = adminERPRepository.findByRole("ADMIN");
+        Notification notification = new Notification();
+        notification.setTitle("Employé vérifié");
+        notification.setMessage("Un nouvel employé, " + employe.getEmail() + ", a été vérifié .");
+        notification.setCreatedBy(admin.getEmail());
+        notification.setEntreprise(employe.getEntreprise());
+        notification.setRead(false);
+        notificationRepository.save(notification);
         return employeRepository.save(employe);
     }
 
@@ -93,7 +101,7 @@ public class EmployeService {
             employe.setEmail(updatedEmploye.getEmail());
         }
         if (updatedEmploye.getPassword() != null) {
-            employe.setPassword(passwordEncoder.encode(updatedEmploye.getPassword())); // Encoder le mot de passe
+            employe.setPassword(passwordEncoder.encode(updatedEmploye.getPassword()));
         }
 
         if (addModuleIds != null && !addModuleIds.isEmpty()) {

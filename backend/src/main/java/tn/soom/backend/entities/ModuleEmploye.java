@@ -28,6 +28,11 @@ public class ModuleEmploye {
     private Employe employe;
 
     @ManyToOne
+    @JoinColumn(name = "facture_id")
+    @JsonIgnore
+    private FacturePay facture;
+
+    @ManyToOne
     @JoinColumn(name = "module_id", nullable = false)
     private Module module;
 
