@@ -26,7 +26,7 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
-    public static final String logo = System.getProperty("user.home") + "/Downloads/uploads/image.png";
+    public static final String logo = System.getProperty("user.home") + "/Downloads/uploads/images.png";
 
     public void sendEmail(String to, String subject, String htmlBody) {
         try {
@@ -75,6 +75,7 @@ public class EmailService {
             String logoPath = logo;
             Image logo = new Image(ImageDataFactory.create(logoPath));
             logo.setWidth(100);
+            logo.setHeight(40);
             document.add(logo);
 
             document.add(new Paragraph("HorizonData"));

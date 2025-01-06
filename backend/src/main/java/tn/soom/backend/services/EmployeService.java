@@ -118,6 +118,7 @@ public class EmployeService {
                     if (!existingModuleEmploye.getStatus()) {
                         existingModuleEmploye.setStatus(true);
                         moduleEmployeRepository.save(existingModuleEmploye);
+                        notifyAdminNewModule(employe, module);
                     }
                 } else {
                     ModuleEmploye moduleEmploye = new ModuleEmploye(employe, module);

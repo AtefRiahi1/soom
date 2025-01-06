@@ -30,7 +30,7 @@ public class FactureService {
     private AdminERPRepo adminERPRepository;
 
     public FacturePay creerFacturePourEmploye(Integer employeId) {
-        List<ModuleEmploye> modulesNonPayes = moduleEmployeRepo.findByEmployeIdAndPayeFalse(employeId);
+        List<ModuleEmploye> modulesNonPayes = moduleEmployeRepo.findByEmployeIdAndPayeFalseAndStatusTrue(employeId);
 
         if (modulesNonPayes.isEmpty()) {
             throw new IllegalArgumentException("Aucun module non payé pour cet employé.");
