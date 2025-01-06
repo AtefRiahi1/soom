@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Erreur</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8d7da; /* Light red background */
+            color: #721c24; /* Dark red text */
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Card Container */
+        .card {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 400px;
+            text-align: center;
+            padding: 20px;
+            border: 1px solid #f5c6cb; /* Red border */
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Title Styles */
+        h1 {
+            font-size: 24px;
+            color: #721c24; /* Dark red */
+            margin-bottom: 10px;
+        }
+
+        /* Paragraph Styles */
+        p {
+            font-size: 18px;
+            margin: 15px 0;
+            color: #495057; /* Neutral gray */
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #dc3545; /* Bootstrap danger color */
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #c82333; /* Slightly darker red */
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>Erreur de Vérification</h1>
+    <p th:text="${message}"></p>
+    <div class="footer">
+        © 2025 HorizonData. Tous droits réservés.
+    </div>
+</div>
+</body>
+</html>

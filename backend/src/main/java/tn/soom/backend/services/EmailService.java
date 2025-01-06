@@ -1,5 +1,11 @@
 package tn.soom.backend.services;
 
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import com.itextpdf.layout.property.TextAlignment;
+import com.itextpdf.layout.property.UnitValue;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
@@ -10,10 +16,7 @@ import org.springframework.stereotype.Service;
 import tn.soom.backend.entities.FacturePay;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.layout.element.Image;
 import tn.soom.backend.entities.ModuleEmploye;
 
 import java.io.ByteArrayOutputStream;
@@ -70,49 +73,76 @@ public class EmailService {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             PdfWriter writer = new PdfWriter(outputStream);
-            Document document = new Document(new com.itextpdf.kernel.pdf.PdfDocument(writer));
+            PdfDocument pdfDocument = new PdfDocument(writer);
+            Document document = new Document(pdfDocument);
+
+            document.setMargins(20, 20, 20, 20);
 
             String logoPath = logo;
             Image logo = new Image(ImageDataFactory.create(logoPath));
-            logo.setWidth(100);
-            logo.setHeight(40);
+            logo.setWidth(120);
+            logo.setHeight(60);
+            logo.setHorizontalAlignment(HorizontalAlignment.LEFT);
             document.add(logo);
 
-            document.add(new Paragraph("HorizonData"));
-            document.add(new Paragraph("E-mail : horizondata@gmail.com"));
-            document.add(new Paragraph("Téléphone : 12345678"));
+            Paragraph companyInfo = new Paragraph("HorizonData\nE-mail : horizondata@gmail.com\nTéléphone : 12345678")
+                    .setTextAlignment(TextAlignment.RIGHT)
+                    .setFontSize(10)
+                    .setMarginBottom(20);
+            document.add(companyInfo);
 
-            document.add(new Paragraph("\nFacture #" + facture.getId())
-                    .setBold().setFontSize(18).setMarginBottom(20));
+            LineSeparator separator = new LineSeparator(new SolidLine());
+            document.add(separator);
 
-            document.add(new Paragraph("Employé : " + facture.getEmploye().getEmail()));
-            document.add(new Paragraph("Date : " + facture.getDateCreation().toString()));
+            Paragraph invoiceTitle = new Paragraph("Facture #" + facture.getId())
+                    .setBold()
+                    .setFontSize(18)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginBottom(10);
+            document.add(invoiceTitle);
+
+            Paragraph employeeInfo = new Paragraph("Employé : " + facture.getEmploye().getEmail() + "\n" +
+                    "Date de création : " + facture.getDateCreation().toLocalDate())
+                    .setTextAlignment(TextAlignment.LEFT)
+                    .setMarginBottom(20);
+            document.add(employeeInfo);
 
             float[] columnWidths = {1, 5, 2};
             Table table = new Table(columnWidths);
-            table.addHeaderCell("N°");
-            table.addHeaderCell("Nom du Module");
-            table.addHeaderCell("Prix");
+            table.setWidth(UnitValue.createPercentValue(100));
+
+            table.addHeaderCell(new Cell().add(new Paragraph("N°").setBold().setTextAlignment(TextAlignment.CENTER)));
+            table.addHeaderCell(new Cell().add(new Paragraph("Nom du Module").setBold().setTextAlignment(TextAlignment.LEFT)));
+            table.addHeaderCell(new Cell().add(new Paragraph("Prix").setBold().setTextAlignment(TextAlignment.RIGHT)));
 
             int index = 1;
             for (ModuleEmploye module : facture.getModules()) {
-                table.addCell(String.valueOf(index++));
-                table.addCell(module.getModule().getNom());
-                table.addCell(String.valueOf(module.getModule().getPrix()));
+                table.addCell(new Cell().add(new Paragraph(String.valueOf(index++)).setTextAlignment(TextAlignment.CENTER)));
+                table.addCell(new Cell().add(new Paragraph(module.getModule().getNom()).setTextAlignment(TextAlignment.LEFT)));
+                table.addCell(new Cell().add(new Paragraph(String.format("%.2f dt", module.getModule().getPrix()))
+                        .setTextAlignment(TextAlignment.RIGHT)));
             }
 
-            table.addCell("");
-            table.addCell("Total");
-            table.addCell(String.valueOf(facture.getMontantTotal()));
+
+            table.addCell(new Cell(1, 2).add(new Paragraph("Total").setBold().setTextAlignment(TextAlignment.RIGHT)));
+            table.addCell(new Cell().add(new Paragraph(String.format("%.2f dt", facture.getMontantTotal()))
+                    .setBold().setTextAlignment(TextAlignment.RIGHT)));
 
             document.add(table);
-            document.close();
 
+            document.add(new Paragraph("\n\nTermes de paiement :").setBold().setFontSize(12));
+            document.add(new Paragraph("Veuillez régler la facture sous 30 jours. En cas de questions, contactez-nous à horizondata@gmail.com.")
+                    .setFontSize(10)
+                    .setTextAlignment(TextAlignment.LEFT)
+                    .setMarginTop(10));
+
+            document.close();
             return outputStream;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-    }
+
+}
 

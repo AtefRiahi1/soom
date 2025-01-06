@@ -61,15 +61,46 @@ public class AuthService {
             resp.setStatusCode(200);
 
             String token = jwtUtils.generateToken(savedEntreprise);
-            String verificationUrl = "http://localhost:9090/auth/verify?token=" + token;
+            String verificationUrl = "http://localhost:9090/account/verify?token=" + token;
 
-            String emailTemplate = "<html>" +
+            String emailTemplate = "<!DOCTYPE html>" +
+                    "<html lang='en'>" +
+                    "<head>" +
+                    "<meta charset='UTF-8'>" +
+                    "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+                    "<title>Vérification de Compte</title>" +
+                    "<style>" +
+                    "body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }" +
+                    ".email-container { max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); padding: 20px; }" +
+                    ".header { background-color: #003366; color: #ffffff; padding: 15px 20px; text-align: center; border-top-left-radius: 8px; border-top-right-radius: 8px; }" +
+                    ".header h1 { margin: 0; font-size: 24px; }" +
+                    ".content { padding: 20px; font-size: 16px; line-height: 1.6; }" +
+                    ".content p { margin: 10px 0; }" +
+                    ".content a { display: inline-block; margin-top: 20px; padding: 10px 20px; background-color: #003366; color: #ffffff; text-decoration: none; border-radius: 5px; font-size: 16px; }" +
+                    ".content a:hover { background-color: #002d4d; }" +
+                    ".footer { margin-top: 20px; text-align: center; font-size: 12px; color: #999; }" +
+                    "</style>" +
+                    "</head>" +
                     "<body>" +
-                    "<h1>Bienvenue sur notre plateforme, " + savedEntreprise.getName() + " !</h1>" +
-                    "<p>Veuillez cliquer sur le lien suivant pour vérifier votre compte :</p>" +
-                    "<a href=\"" + verificationUrl + "\">Vérifiez votre compte</a>" +
+                    "<div class='email-container'>" +
+                    "<div class='header'>" +
+                    "<h1>Bienvenue, " + savedEntreprise.getName() + " !</h1>" +
+                    "</div>" +
+                    "<div class='content'>" +
+                    "<p>Merci de vous être inscrit sur notre plateforme. Nous sommes ravis de vous compter parmi nous.</p>" +
+                    "<p>Pour activer votre compte, veuillez cliquer sur le bouton ci-dessous :</p>" +
+                    "<a href='" + verificationUrl + "'>Vérifier mon compte</a>" +
+                    "<p>Si vous n'avez pas créé ce compte, veuillez ignorer cet email.</p>" +
+                    "</div>" +
+                    "<div class='footer'>" +
+                    "© 2025 HorizonData. Tous droits réservés." +
+                    "</div>" +
+                    "</div>" +
                     "</body>" +
                     "</html>";
+
+
+
             emailService.sendEmail(savedEntreprise.getEmail(), "Confirmation de vérification de compte", emailTemplate);
 
             AdminERP admin = adminERPRepo.findByRole("ADMIN");

@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,12 +34,6 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @Autowired
-    private JWTUtils jwtUtils;
-
-    @Autowired
-    private EntrepriseRepo entrepriseRepo;
-
     public static final String DIRECTORY = System.getProperty("user.home") + "/Downloads/uploads/";
 
     @PostMapping("/signup")
@@ -46,26 +41,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.signUpEntreprise(entreprise));
     }
 
-    @GetMapping("/verify")
-    public ResponseEntity<String> verifyAccount(@RequestParam("token") String token) {
-        try {
-            String email = jwtUtils.validateTokenAndGetEmail(token);
-
-            Entreprise entreprise = entrepriseRepo.findByEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException("Aucune entreprise trouvée pour cet email."));
-
-            if (entreprise.getIsverified()) {
-                return ResponseEntity.badRequest().body("Le compte est déjà vérifié.");
-            }
-
-            entreprise.setIsverified(true);
-            entrepriseRepo.save(entreprise);
-
-            return ResponseEntity.ok("Votre compte a été vérifié avec succès !");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Échec de la vérification : " + e.getMessage());
-        }
-    }
 
 
     @PostMapping("/signin")
