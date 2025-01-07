@@ -33,6 +33,9 @@ public class AdminERP implements UserDetails {
     @OneToMany(mappedBy = "adminERP", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
+    @OneToMany(mappedBy = "adminERP")
+    private List<AdminSession> adminSessions;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));

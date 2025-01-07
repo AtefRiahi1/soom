@@ -170,7 +170,7 @@ public class AuthService {
                     response.setRefreshToken(refreshToken);
                     response.setExpirationTime("24Hr");
                     response.setMessage("Bienvenue Employé " + employe.get().getEmail());
-                    response.setUserType("employé");
+                    response.setUserType("employe");
                 } else {
                     response.setStatusCode(403);
                     response.setError("Votre compte d'employé n'est pas vérifié.");

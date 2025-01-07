@@ -10,7 +10,7 @@ import tn.soom.backend.services.EmployeSessionService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/sessions")
+@RequestMapping("/empsessions")
 public class EmployeSessionController {
 
     @Autowired

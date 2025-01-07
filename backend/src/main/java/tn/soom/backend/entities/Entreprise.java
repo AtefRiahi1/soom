@@ -43,6 +43,9 @@ public class Entreprise implements UserDetails {
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Notification> notifications;
 
+    @OneToMany(mappedBy = "entreprise")
+    private List<EntrepriseSession> entrepriseSessions;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role));
