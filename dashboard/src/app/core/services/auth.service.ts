@@ -20,16 +20,18 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/signin`, credentials);
   }
 
-  uploadFile(file: File):Observable<HttpEvent<string>> {
+  uploadFile(file: File, username: string): Observable<HttpEvent<string>> {
     const formData: FormData = new FormData();
     formData.append('file', file);
-
+    formData.append('username', username);
+  
     return this.http.post(`${this.apiUrl}/upload`, formData, {
-      reportProgress:true,
-      observe:'events',
-      responseType: 'text' 
+      reportProgress: true,
+      observe: 'events',
+      responseType: 'text',
     });
   }
+  
 
   downloadFile(fileName: string, email: string):Observable<HttpEvent<Blob>> {
     return this.http.get(`${this.apiUrl}/download/${fileName}`, {

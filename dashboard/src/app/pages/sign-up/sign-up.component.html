@@ -1,1 +1,52 @@
-<p>sign-up works!</p>
+<div class="login-container">
+    <div class="login-left">
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="signup-form">
+        <img src="assets/images/images.png" alt="Logo" class="form-logo">
+  
+        <div class="form-group">
+          <label for="name">Nom :</label>
+          <input id="name" formControlName="name" class="form-input" />
+          <div *ngIf="signupForm.get('name')?.invalid && signupForm.get('name')?.touched" class="error-message">
+            Nom requis.
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label for="address">Adresse :</label>
+          <input id="address" formControlName="address" class="form-input" />
+        </div>
+  
+        <div class="form-group">
+          <label for="tel">Téléphone :</label>
+          <input id="tel" formControlName="tel" class="form-input" />
+        </div>
+  
+        <div class="form-group">
+          <label for="email">Email :</label>
+          <input id="email" formControlName="email" type="email" class="form-input" />
+        </div>
+  
+        <div class="form-group">
+          <label for="password">Mot de passe :</label>
+          <input id="password" formControlName="password" type="password" class="form-input" />
+        </div>
+  
+        <div class="form-group">
+          <label for="logo">Logo :</label>
+          <input id="logo" type="file" (change)="onFileSelect($event)" class="form-input" />
+          <progress *ngIf="logoUploadProgress > 0" [value]="logoUploadProgress" max="100" class="progress-bar"></progress>
+        </div>
+  
+        <button type="submit" [disabled]="isSubmitting || signupForm.invalid" class="submit-button">
+          S'inscrire
+        </button>
+  
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      </form>
+    </div>
+  
+    <div class="login-right">
+      <!-- Right section with background image -->
+    </div>
+  </div>
+  

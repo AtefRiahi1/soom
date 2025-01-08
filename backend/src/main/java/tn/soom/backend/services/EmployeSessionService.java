@@ -2,7 +2,9 @@ package tn.soom.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tn.soom.backend.entities.Employe;
 import tn.soom.backend.entities.EmployeSession;
+import tn.soom.backend.repositories.EmployeRepo;
 import tn.soom.backend.repositories.EmployeSessionRepo;
 
 import java.time.LocalDateTime;
@@ -13,11 +15,16 @@ import java.util.Optional;
 public class EmployeSessionService {
     @Autowired
     private EmployeSessionRepo employeSessionRepo;
+    @Autowired
+    private EmployeRepo employeRepo;
 
     public EmployeSession createSession(String empMail) {
+        Employe employe = employeRepo.findByEmail(empMail)
+                .orElseThrow(() -> new IllegalArgumentException("Employe introuvable avec l'email : " + empMail));
         EmployeSession session = new EmployeSession();
         session.setEmployeemail(empMail);
         session.setSessionStart(LocalDateTime.now());
+        session.setEmploye(employe);
         return employeSessionRepo.save(session);
     }
 

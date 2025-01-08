@@ -12,4 +12,5 @@ public interface ModuleEmployeRepo extends JpaRepository<ModuleEmploye, Integer>
     Optional<ModuleEmploye> findByEmployeIdAndModuleId(Integer employeId, Integer moduleId);
     List<ModuleEmploye> findAllByPaymentDateBefore(LocalDateTime date);
     List<ModuleEmploye> findByEmployeIdAndPayeFalseAndStatusTrue(Integer employeId);
+    List<ModuleEmploye> findByEmployeEntrepriseId(Integer entId);
 }

@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tn.soom.backend.entities.FacturePay;
-import tn.soom.backend.services.FactureService;
+import tn.soom.backend.services.FacturePayService;
 
 @RestController
 @RequestMapping("/facturepay")
-public class FactureController {
+public class FacturePayController {
 
     @Autowired
-    private FactureService factureService;
+    private FacturePayService factureService;
 
     @PostMapping("/{employeId}")
     public ResponseEntity<FacturePay> creerFacture(@PathVariable Integer employeId) {

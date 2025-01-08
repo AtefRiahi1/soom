@@ -2,8 +2,11 @@ package tn.soom.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tn.soom.backend.entities.AdminERP;
 import tn.soom.backend.entities.AdminSession;
 import tn.soom.backend.entities.EmployeSession;
+import tn.soom.backend.entities.Entreprise;
+import tn.soom.backend.repositories.AdminERPRepo;
 import tn.soom.backend.repositories.AdminSessionRepo;
 import tn.soom.backend.repositories.EmployeSessionRepo;
 
@@ -15,11 +18,15 @@ import java.util.Optional;
 public class AdminSessionService {
     @Autowired
     private AdminSessionRepo adminSessionRepo;
-
+    @Autowired
+    private AdminERPRepo adminERPRepo;
     public AdminSession createSession(String adminMail) {
+        AdminERP adminERP = adminERPRepo.findByEmail(adminMail)
+                .orElseThrow(() -> new IllegalArgumentException("Admin introuvable avec l'email : " + adminMail));
         AdminSession session = new AdminSession();
         session.setAdminemail(adminMail);
         session.setSessionStart(LocalDateTime.now());
+        session.setAdminERP(adminERP);
         return adminSessionRepo.save(session);
     }
 

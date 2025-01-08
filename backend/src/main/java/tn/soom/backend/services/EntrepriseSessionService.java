@@ -3,8 +3,10 @@ package tn.soom.backend.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tn.soom.backend.entities.EmployeSession;
+import tn.soom.backend.entities.Entreprise;
 import tn.soom.backend.entities.EntrepriseSession;
 import tn.soom.backend.repositories.EmployeSessionRepo;
+import tn.soom.backend.repositories.EntrepriseRepo;
 import tn.soom.backend.repositories.EntrepriseSessionRepo;
 
 import java.time.LocalDateTime;
@@ -15,11 +17,16 @@ import java.util.Optional;
 public class EntrepriseSessionService {
     @Autowired
     private EntrepriseSessionRepo entrepriseSessionRepo;
+    @Autowired
+    private EntrepriseRepo entrepriseRepo;
 
     public EntrepriseSession createSession(String entMail) {
+        Entreprise entreprise = entrepriseRepo.findByEmail(entMail)
+                .orElseThrow(() -> new IllegalArgumentException("Entreprise introuvable avec l'email : " + entMail));
         EntrepriseSession session = new EntrepriseSession();
         session.setEntrepriseemail(entMail);
         session.setSessionStart(LocalDateTime.now());
+        session.setEntreprise(entreprise);
         return entrepriseSessionRepo.save(session);
     }
 

@@ -49,27 +49,28 @@ public class AuthController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile multipartFile) throws IOException {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = ((Authentication) authentication).getName();
+    public ResponseEntity<String> uploadFile(
+            @RequestParam("file") MultipartFile multipartFile,
+            @RequestParam("username") String username) throws IOException {
 
+        if (username == null || username.isEmpty()) {
+            return ResponseEntity.badRequest().body("Username is required");
+        }
 
-        Path userDirectory = Paths.get(DIRECTORY, username,"Logo").toAbsolutePath().normalize();
-
+        Path userDirectory = Paths.get(DIRECTORY, username, "Logo").toAbsolutePath().normalize();
 
         if (!userDirectory.toFile().exists()) {
             userDirectory.toFile().mkdirs();
         }
 
-
         String filename = StringUtils.cleanPath(multipartFile.getOriginalFilename());
         Path fileStorage = userDirectory.resolve(filename);
 
-
         copy(multipartFile.getInputStream(), fileStorage, REPLACE_EXISTING);
 
-        return ResponseEntity.ok().body(filename);
+        return ResponseEntity.ok().body("File uploaded successfully: " + filename);
     }
+
 
     @GetMapping("/download/{fileName}")
     public ResponseEntity<Resource> serveFile(

@@ -3,11 +3,9 @@ package tn.soom.backend.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import tn.soom.backend.entities.AdminERP;
-import tn.soom.backend.entities.Employe;
-import tn.soom.backend.entities.ModuleEmploye;
-import tn.soom.backend.entities.Notification;
+import tn.soom.backend.entities.*;
 import tn.soom.backend.repositories.AdminERPRepo;
+import tn.soom.backend.repositories.EmployeRepo;
 import tn.soom.backend.repositories.ModuleEmployeRepo;
 import tn.soom.backend.repositories.NotificationRepo;
 
@@ -23,6 +21,9 @@ public class ModuleEmployeService {
     private NotificationRepo notificationRepository;
     @Autowired
     private AdminERPRepo adminERPRepository;
+    @Autowired
+    private EmployeRepo employeRepo;
+
 
     public List<ModuleEmploye> getModuleEmployeByEmployeId(Integer empId) {
         return moduleEmployeRepository.findByEmployeId(empId);
@@ -89,5 +90,26 @@ public class ModuleEmployeService {
         moduleEmployeRepository.saveAll(modulesToUpdate);
 
         System.out.println("Mise à jour des modules employé effectuée : " + modulesToUpdate.size() + " modules mis à jour.");
+    }
+
+    public List<ModuleEmploye> getModuleByEntrepriseId(Integer entrepriseid) {
+        return moduleEmployeRepository.findByEmployeEntrepriseId(entrepriseid);
+    }
+
+    public ModuleEmploye updateModuleEmployeResponsable(Integer moduleemployeId,Integer empId) {
+        ModuleEmploye moduleEmploye = moduleEmployeRepository.findById(moduleemployeId)
+                .orElseThrow(() -> new IllegalArgumentException("Module introuvable avec l'ID : " + moduleemployeId));
+        Employe employe = employeRepo.findById(empId)
+                .orElseThrow(() -> new IllegalArgumentException("Employe introuvable avec l'ID : " + empId));
+
+        moduleEmploye.setEmploye(employe);
+        Notification notification = new Notification();
+        notification.setTitle("Nouveau module");
+        notification.setMessage("Le module "+ moduleEmploye.getModule().getNom() +" est ajouté à vos modules.");
+        notification.setCreatedBy(moduleEmploye.getEmploye().getEntreprise().getName());
+        notification.setEmploye(moduleEmploye.getEmploye());
+        notification.setRead(false);
+        notificationRepository.save(notification);
+        return moduleEmployeRepository.save(moduleEmploye);
     }
 }
