@@ -18,6 +18,10 @@
     </button>
   
     <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+    <div class="redirect-link">
+      Pas encore inscrit ? 
+      <a routerLink="/signup" class="signup-link">Créer un compte</a>
+    </div>
   </form>
 </div>
   

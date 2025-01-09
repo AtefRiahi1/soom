@@ -40,8 +40,6 @@ export class SignInComponent {
     // Mise à jour de la propriété isSubmitting pour désactiver le bouton pendant le traitement
     this.isSubmitting = true;
     const signInData = this.signInForm.value;
-    console.log(signInData);
-
     this.authService.signIn(signInData).subscribe(
       (response) => {
         console.log('Sign in response', response);
@@ -77,7 +75,7 @@ export class SignInComponent {
             this.entreprisesessionservice.startSession(userMail).subscribe(
               (sessionResponse) => {
                 localStorage.setItem('sessionId', sessionResponse.id); // Save session ID in localStorage
-                this.router.navigate(['/signup']);
+                this.router.navigate(['/employes']);
               },
               (error) => {
                 this.errorMessage = 'Échec du démarrage de la session. Veuillez réessayer.';

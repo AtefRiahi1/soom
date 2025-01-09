@@ -31,4 +31,8 @@ export class AdminSessionService {
   isSessionActive(id: number): Observable<boolean> {
     return this.http.get<boolean>(`${this.apiUrl}/${id}/active`);
   }
+
+  getAdminByEmail(email: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${email}`);
+  }
 }

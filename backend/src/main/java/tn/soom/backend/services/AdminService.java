@@ -32,4 +32,8 @@ public class AdminService {
             adminERPRepo.save(defaultAdmin);
         }
     }
+
+    public Optional<AdminERP> getAdminByEmail(String email) {
+        return adminERPRepo.findByEmail(email);
+    }
 }

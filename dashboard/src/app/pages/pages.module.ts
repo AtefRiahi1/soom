@@ -33,6 +33,7 @@ import { CdkStepperModule } from '@angular/cdk/stepper';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
+import { ListEmployeEntrepriseComponent } from './employe/list-employe-entreprise/list-employe-entreprise.component';
 
 
 @NgModule({
@@ -40,7 +41,8 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 
   
     SignInComponent,
-         SignUpComponent
+         SignUpComponent,
+         ListEmployeEntrepriseComponent
   ],
   imports: [
     CommonModule,

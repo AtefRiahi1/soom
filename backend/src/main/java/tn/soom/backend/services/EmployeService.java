@@ -176,4 +176,8 @@ public class EmployeService {
         }
         return null;
     }
+
+    public Optional<Employe> getEmployeByEmail(String email) {
+        return employeRepository.findByEmail(email);
+    }
 }

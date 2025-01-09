@@ -8,6 +8,11 @@ import { HttpClient } from '@angular/common/http';
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { TranslateService } from '@ngx-translate/core';
+import { AdminSessionService } from 'src/app/core/services/admin-session.service';
+import { EntrepriseService } from 'src/app/core/services/entreprise.service';
+import { EmployeService } from 'src/app/core/services/employe.service';
+import { EntrepriseSessionService } from 'src/app/core/services/entreprise-session.service';
+import { EmployeSessionService } from 'src/app/core/services/employe-session.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -33,7 +38,9 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
 
   constructor(private eventService: EventService, private router: Router,
               public translate: TranslateService,
-              private http: HttpClient,
+              private http: HttpClient,private adminSessionService:AdminSessionService,
+              private entrepriseService:EntrepriseService,private employeService:EmployeService,
+              private entrepriseSessionService:EntrepriseSessionService,private employeSessionService:EmployeSessionService,
   ) {
     router.events.forEach((event) => {
       if (event instanceof NavigationEnd) {
@@ -51,22 +58,28 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
 
     const userType = localStorage.getItem('userType');
     const sessionId = localStorage.getItem('sessionId');
+    this.checkSessionActive(userType,sessionId);
 
 
     if (this.userType && userEmail) {
-      if (this.userType === 'user') {
+      if (this.userType === 'admin') {
+        this.fetchAdminProfile(userEmail);
 
 
+      } else if (this.userType === 'entreprise') {
 
-      } else if (this.userType === 'worker') {
+        this.fetchEntrepriseProfile(userEmail);
 
+      } else if (this.userType === 'employe') {
 
+        this.fetchEmployeProfile(userEmail);
 
-      } else {
-        this.errorMessage = 'Invalid user type.';
+      }
+      else {
+        this.errorMessage = "Type d'utilisateur invalide.";
       }
     } else {
-      this.errorMessage = 'User information not found in local storage.';
+      this.errorMessage = 'Informations utilisateur introuvables dans le stockage local.';
     }
   /*  this.initialize(this.user);
     console.log(this.user)*/
@@ -172,19 +185,22 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
   /**
    * Initialize
    */
-  initialize(user: string): void {
-    if (user && user) {
+  initialize(userAuthorities: string[]): void {
+    console.log(userAuthorities)
+    if (userAuthorities && userAuthorities.length > 0) {
+      console.log(userAuthorities)
       this.menuItems = MENU.filter(item => {
-        //console.log(item);
-        return !item.roles || item.roles.includes(user);
-
+        // Vérifiez si l'élément du menu est destiné à au moins une des autorités de l'utilisateur
+        return (
+          !item.roles || item.roles.some(role => userAuthorities.includes(role))
+        );
       });
     } else {
-      // If user role is not provided or user is not defined, show all menu items
+      // Si aucune autorité n'est fournie, affichez tous les éléments de menu
       this.menuItems = MENU;
     }
-
   }
+  
   /*initialize(user:any): void {
     this.menuItems = MENU;
   }*/
@@ -195,6 +211,83 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnChanges {
    */
   hasItems(item: MenuItem) {
     return item.subItems !== undefined ? item.subItems.length > 0 : false;
+  }
+
+  private fetchAdminProfile(email: string): void {
+    this.adminSessionService.getAdminByEmail(email).subscribe(
+      (data) => {
+        this.user = data;
+        console.log(this.user.role);
+        const authorities = this.user.authorities.map((auth: any) => auth.authority);
+        this.initialize(authorities); // Convert to array for consistency
+      },
+      (error) => {
+        console.error('Error fetching user data', error);
+        this.errorMessage = "Erreur lors de la récupération des données d'administrateur. Veuillez réessayer plus tard.";
+      }
+    );
+  }
+  
+  private fetchEntrepriseProfile(email: string): void {
+    this.entrepriseService.getEntrepriseByEmail(email).subscribe(
+      (data) => {
+        this.user = data;
+        console.log(this.user.role);
+        const authorities = this.user.authorities.map((auth: any) => auth.authority);
+        this.initialize(authorities); // Convert to array for consistency
+      },
+      (error) => {
+        console.error('Error fetching user data', error);
+        this.errorMessage = "Erreur lors de la récupération des données de l'entreprise. Veuillez réessayer plus tard.";
+      }
+    );
+  }
+  
+  private fetchEmployeProfile(email: string): void {
+    this.employeService.getEmployeByEmail(email).subscribe(
+      (data) => {
+        this.user = data;
+        console.log(this.user.role);
+        const authorities = this.user.authorities.map((auth: any) => auth.authority); // Extract all authorities
+        this.initialize(authorities);
+      },
+      (error) => {
+        console.error('Error fetching user data', error);
+        this.errorMessage = "Erreur lors de la récupération des données de l'employé. Veuillez réessayer plus tard.";
+      }
+    );
+  }
+  
+
+  checkSessionActive(userType: string, sessionId: string): void {
+    const id = Number(sessionId);
+
+    if (userType === 'admin') {
+      this.adminSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    }else if (userType === 'entreprise') {
+      this.entrepriseSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    }
+     else if (userType === 'employe') {
+      this.employeSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    } else {
+      localStorage.clear();
+      this.router.navigateByUrl('/signin');
+    }
   }
 
 }

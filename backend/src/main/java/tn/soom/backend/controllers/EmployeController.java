@@ -1,14 +1,17 @@
 package tn.soom.backend.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.soom.backend.dto.UpdatePasswordRequest;
+import tn.soom.backend.entities.AdminERP;
 import tn.soom.backend.entities.Employe;
 import tn.soom.backend.entities.Entreprise;
 import tn.soom.backend.services.EmployeService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/employe")
@@ -74,6 +77,18 @@ public class EmployeController {
             }
         } else {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{email}")
+    public ResponseEntity<?> getEmployeByEmail(@PathVariable String email) {
+        Optional<Employe> optionalEmploye = employeService.getEmployeByEmail(email);
+
+        if (optionalEmploye.isPresent()) {
+            return ResponseEntity.ok(optionalEmploye.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Employe non trouvée pour l'email : " + email);
         }
     }
 }

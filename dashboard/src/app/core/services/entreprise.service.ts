@@ -24,4 +24,8 @@ export class EntrepriseService {
     const body = { newPassword };
     return this.http.put(`${this.apiUrl}/${id}/updatePassword`, body);
   }
+
+  getEntrepriseByEmail(email: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${email}`);
+  }
 }

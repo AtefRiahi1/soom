@@ -1,6 +1,7 @@
 package tn.soom.backend.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.soom.backend.dto.UpdatePasswordRequest;
@@ -9,6 +10,7 @@ import tn.soom.backend.entities.Entreprise;
 import tn.soom.backend.services.EntrepriseService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/entreprise")
@@ -43,6 +45,18 @@ public class EntrepriseController {
             }
         } else {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/{email}")
+    public ResponseEntity<?> getEntrepriseByEmail(@PathVariable String email) {
+        Optional<Entreprise> entrepriseOptional = entrepriseService.getEntrepriseByEmail(email);
+
+        if (entrepriseOptional.isPresent()) {
+            return ResponseEntity.ok(entrepriseOptional.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Entreprise non trouvée pour l'email : " + email);
         }
     }
 }

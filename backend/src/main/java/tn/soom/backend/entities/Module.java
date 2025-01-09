@@ -19,4 +19,6 @@ public class Module {
     private String nom;
 
     private Double prix;
+
+    private Boolean app;
 }

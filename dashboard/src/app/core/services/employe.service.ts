@@ -48,4 +48,8 @@ export class EmployeService {
     const body = { newPassword };
     return this.http.put(`${this.apiUrl}/${id}/updatePassword`, body);
   }
+
+  getEmployeByEmail(email: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${email}`);
+  }
 }

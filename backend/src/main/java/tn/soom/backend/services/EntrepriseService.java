@@ -2,6 +2,7 @@ package tn.soom.backend.services;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import tn.soom.backend.entities.AdminERP;
 import tn.soom.backend.entities.Employe;
 import tn.soom.backend.entities.Entreprise;
 import tn.soom.backend.repositories.EntrepriseRepo;
@@ -40,5 +41,9 @@ public class EntrepriseService {
             return entrepriseRepository.save(entreprise);
         }
         return null;
+    }
+
+    public Optional<Entreprise> getEntrepriseByEmail(String email) {
+        return entrepriseRepository.findByEmail(email);
     }
 }
