@@ -47,7 +47,7 @@ export class SignUpComponent implements OnInit{
   uploadLogo(): void {
     if (!this.logoFile) return;
 
-    const username = this.signupForm.get('name')?.value; // Récupérer le username du formulaire
+    const username = this.signupForm.get('email')?.value; // Récupérer le username du formulaire
 
     const formData = new FormData();
     formData.append('file', this.logoFile);

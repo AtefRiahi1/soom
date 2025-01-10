@@ -18,16 +18,7 @@ export const MENU: MenuItem[] = [
         label: 'Gestion des employés',
         icon: 'bx-home-circle',
         link: '/employes',
-        roles: ['ADMIN','ENTREPRISE']
-      
-     
-    },
-    {
-        id: 3,
-        label: 'Gestion des admins',
-        icon: 'bx-home-circle',
-        link: '/employes',
-        roles: ['ADMIN']
+        roles: ['ENTREPRISE']
       
      
     }

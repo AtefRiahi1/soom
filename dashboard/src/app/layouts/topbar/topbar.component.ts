@@ -8,6 +8,15 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { StompSubscription } from '@stomp/stompjs';
 import { Subscription } from 'rxjs';
+import { AdminSessionService } from 'src/app/core/services/admin-session.service';
+import { EntrepriseSessionService } from 'src/app/core/services/entreprise-session.service';
+import { EmployeSessionService } from 'src/app/core/services/employe-session.service';
+import { EntrepriseService } from 'src/app/core/services/entreprise.service';
+import { EmployeService } from 'src/app/core/services/employe.service';
+import { NotificationService } from 'src/app/core/services/notification.service';
+import { NotificationModels } from 'src/app/core/models/notification.model';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-topbar',
@@ -17,12 +26,14 @@ import { Subscription } from 'rxjs';
 export class TopbarComponent implements OnInit {
   private stompSubscription: StompSubscription;
   element: any;
+  notifications: NotificationModels[] = [];
   cookieValue: any;
   flagvalue: any;
   countryName: any;
   valueset: any;
   user: any;
   userType: string | null = '';
+  logoUrl: string | null = null;
   errorMessage = '';
   notification: { message: string; type: string; time: string }[] = [];
   sessionId = localStorage.getItem('sessionId');
@@ -36,7 +47,13 @@ export class TopbarComponent implements OnInit {
 
       public languageService: LanguageService,
       public translate: TranslateService,
-
+      private adminSessionService:AdminSessionService,
+      private entrepriseSessionService:EntrepriseSessionService,
+      private employeSessionService:EmployeSessionService,
+      private entrepriseService:EntrepriseService,
+      private employeService:EmployeService,
+      private notificationService :NotificationService,
+      private authService:AuthService,
       public _cookiesService: CookieService,
 
   ) { }
@@ -55,6 +72,7 @@ export class TopbarComponent implements OnInit {
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
   ngOnInit() {
+    
     this.openMobileMenu = false;
     this.element = document.documentElement;
 
@@ -70,10 +88,25 @@ export class TopbarComponent implements OnInit {
 
     const userType = localStorage.getItem('userType');
     const sessionId = localStorage.getItem('sessionId');
-   
+    this.checkSessionActive(userType,sessionId);
 this.getUserTypeAndFetchProfile();
 
 
+  }
+
+  downloadFile(fileName: string,email:string): void {
+    this.authService.downloadFile(fileName, email).subscribe(
+      (event) => {
+        if (event.type === HttpEventType.Response) {
+          const blob = event.body as Blob;
+          const objectUrl = URL.createObjectURL(blob);
+          this.logoUrl = objectUrl; // Assign the URL to the logoUrl
+        }
+      },
+      (error) => {
+        console.error('Error downloading file:', error);
+      }
+    );
   }
 
   getUserTypeAndFetchProfile(): void {
@@ -83,15 +116,21 @@ this.getUserTypeAndFetchProfile();
     if (this.userType && userEmail) {
       this.checkTokenExpiration();
 
-      if (this.userType === 'user') {
+      if (this.userType === 'admin') {
+        this.fetchAdminProfile(userEmail);
 
-      } else if (this.userType === 'worker') {
+      }else if (this.userType === 'entreprise') {
+        this.fetchEntrepriseProfile(userEmail);
+
+      }
+       else if (this.userType === 'employe') {
+        this.fetchEmployeProfile(userEmail);
 
       } else {
-        this.errorMessage = 'Invalid user type.';
+        this.errorMessage = "Type d'utilisateur invalide.";
       }
     } else {
-      this.errorMessage = 'User information not found in local storage.';
+      this.errorMessage = 'Informations utilisateur introuvables dans le stockage local.';
     }
   }
  /* ngOnDestroy(): void {
@@ -116,6 +155,51 @@ this.getUserTypeAndFetchProfile();
     }
   }*/
 
+    private fetchAdminProfile(email: string): void {
+      this.adminSessionService.getAdminByEmail(email).subscribe(
+          (data) => {
+            this.user = data;
+            this.loadAdminNotifications(this.user.id);
+            this.downloadFile("images.png",data.email);
+           // this.subscribeToNotifications();
+          },
+          (error) => {
+            console.error('Error fetching user data', error);
+            this.errorMessage = 'Erreur lors de la récupération des données utilisateur. Veuillez réessayer plus tard.';
+          }
+      );
+    }
+
+    private fetchEntrepriseProfile(email: string): void {
+      this.entrepriseService.getEntrepriseByEmail(email).subscribe(
+          (data) => {
+            this.user = data;
+            this.loadEntrepriseNotifications(this.user.id)
+            this.downloadFile(data.logo,data.email);
+           // this.subscribeToNotifications();
+          },
+          (error) => {
+            console.error('Error fetching user data', error);
+            this.errorMessage = 'Erreur lors de la récupération des données utilisateur. Veuillez réessayer plus tard.';
+          }
+      );
+    }
+
+    private fetchEmployeProfile(email: string): void {
+      this.employeService.getEmployeByEmail(email).subscribe(
+          (data) => {
+            this.user = data;
+            this.loadEmployeNotifications(this.user.id);
+            this.downloadFile(data.entreprise.logo,data.entreprise.email);
+           // this.subscribeToNotifications();
+          },
+          (error) => {
+            console.error('Error fetching user data', error);
+            this.errorMessage = 'Erreur lors de la récupération des données utilisateur. Veuillez réessayer plus tard.';
+          }
+      );
+    }
+
 
   setLanguage(text: string, lang: string, flag: string) {
     this.countryName = text;
@@ -131,6 +215,52 @@ this.getUserTypeAndFetchProfile();
   toggleMobileMenu(event: any) {
     event.preventDefault();
     this.mobileMenuButtonClicked.emit();
+  }
+
+  logout() {
+    const userType = localStorage.getItem('userType');
+
+    if (userType === 'admin') {
+      this.adminSessionService.endSession(Number(this.sessionId)).subscribe(
+          (response) => {
+            console.log('Worker session ended', response);
+            localStorage.clear();
+            this.router.navigate(['/signin']);
+          },
+          (error) => {
+            console.error('Failed to end worker session', error);
+            this.router.navigate(['/signin']);
+          }
+      );
+    }else if (userType === 'entreprise') {
+      this.entrepriseSessionService.endSession(Number(this.sessionId)).subscribe(
+          (response) => {
+            console.log('User session ended', response);
+            localStorage.clear();
+            this.router.navigate(['/signin']);
+          },
+          (error) => {
+            console.error('Failed to end user session', error);
+            this.router.navigate(['/signin']);
+          }
+      );
+    } 
+     else if (userType === 'employe') {
+      this.employeSessionService.endSession(Number(this.sessionId)).subscribe(
+          (response) => {
+            console.log('User session ended', response);
+            localStorage.clear();
+            this.router.navigate(['/signin']);
+          },
+          (error) => {
+            console.error('Failed to end user session', error);
+            this.router.navigate(['/signin']);
+          }
+      );
+    } else {
+      localStorage.clear();
+      this.router.navigate(['/signin']);
+    }
   }
 
 
@@ -162,6 +292,122 @@ this.getUserTypeAndFetchProfile();
     }
   }
 
+  loadAdminNotifications(id: any): void {
+    this.notificationService.getNotificationsByAdminId(id).subscribe(
+        (notifications) => {
+          // Get the current date and the date from three months ago
+          const now = new Date();
+          const threeMonthsAgo = new Date(now);
+          threeMonthsAgo.setMonth(now.getMonth() - 3);
+
+          // Filter notifications from the last 3 months
+          const recentNotifications = notifications.filter(notification => {
+            const notificationDate = new Date(notification.createdAt); // Assurez-vous que createdAt est un format de date valide
+            return notificationDate >= threeMonthsAgo;
+          });
+
+          // Sort notifications to have unread ones on top
+          this.notifications = recentNotifications.sort((a, b) => {
+            // First, sort by read status
+            if (a.read === b.read) {
+              // If both have the same read status, sort by createdAt date
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // Newest first
+            }
+            return a.read ? 1 : -1; // Unread notifications come first
+          });
+
+          // Optionally, you can reverse the order if you want the latest notifications first
+          // this.notifications.reverse();
+
+          this.updateUnreadCount();
+        },
+        (error) => {
+          console.log("Error loading worker notifications:", error);
+        }
+    );
+  }
+
+  loadEntrepriseNotifications(id: any): void {
+    this.notificationService.getNotificationsByEntrepriseId(id).subscribe(
+        (notifications) => {
+          // Get the current date and the date from three months ago
+          const now = new Date();
+          const threeMonthsAgo = new Date(now);
+          threeMonthsAgo.setMonth(now.getMonth() - 3);
+
+          // Filter notifications from the last 3 months
+          const recentNotifications = notifications.filter(notification => {
+            const notificationDate = new Date(notification.createdAt); // Assurez-vous que createdAt est un format de date valide
+            return notificationDate >= threeMonthsAgo;
+          });
+
+          // Sort notifications to have unread ones on top
+          this.notifications = recentNotifications.sort((a, b) => {
+            // First, sort by read status
+            if (a.read === b.read) {
+              // If both have the same read status, sort by createdAt date
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // Newest first
+            }
+            return a.read ? 1 : -1; // Unread notifications come first
+          });
+
+          // Optionally, you can reverse the order if you want the latest notifications first
+          // this.notifications.reverse();
+
+          this.updateUnreadCount();
+        },
+        (error) => {
+          console.log("Error loading worker notifications:", error);
+        }
+    );
+  }
+
+  loadEmployeNotifications(id: any): void {
+    this.notificationService.getNotificationsByEmployeId(id).subscribe(
+        (notifications) => {
+          // Get the current date and the date from three months ago
+          const now = new Date();
+          const threeMonthsAgo = new Date(now);
+          threeMonthsAgo.setMonth(now.getMonth() - 3);
+
+          // Filter notifications from the last 3 months
+          const recentNotifications = notifications.filter(notification => {
+            const notificationDate = new Date(notification.createdAt); // Assurez-vous que createdAt est un format de date valide
+            return notificationDate >= threeMonthsAgo;
+          });
+
+          // Sort notifications to have unread ones on top
+          this.notifications = recentNotifications.sort((a, b) => {
+            // First, sort by read status
+            if (a.read === b.read) {
+              // If both have the same read status, sort by createdAt date
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // Newest first
+            }
+            return a.read ? 1 : -1; // Unread notifications come first
+          });
+
+          // Optionally, you can reverse the order if you want the latest notifications first
+          // this.notifications.reverse();
+
+          this.updateUnreadCount();
+        },
+        (error) => {
+          console.log("Error loading worker notifications:", error);
+        }
+    );
+  }
+
+  updateUnreadCount() {
+    this.unreadCount = this.notifications.filter(notification => !notification.read).length;
+  }
+
+  markAsRead(notification: NotificationModels): void {
+    this.notificationService
+        .markNotificationAsRead(notification.id)
+        .subscribe((updatedNotification) => {
+          notification.read = updatedNotification.read;
+        });
+  }
 
 
 
@@ -209,6 +455,37 @@ this.getUserTypeAndFetchProfile();
     } else {
       console.error('Token not found.');
 
+    }
+  }
+
+  checkSessionActive(userType: string, sessionId: string): void {
+    const id = Number(sessionId);
+
+    if (userType === 'admin') {
+      this.adminSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    } else if (userType === 'entreprise') {
+      this.entrepriseSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    }else if (userType === 'employe') {
+      this.employeSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    }
+     else {
+      localStorage.clear();
+      this.router.navigateByUrl('/signin');
     }
   }
 

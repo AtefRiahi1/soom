@@ -68,7 +68,7 @@ public class AuthController {
 
         copy(multipartFile.getInputStream(), fileStorage, REPLACE_EXISTING);
 
-        return ResponseEntity.ok().body("File uploaded successfully: " + filename);
+        return ResponseEntity.ok().body(filename);
     }
 
 

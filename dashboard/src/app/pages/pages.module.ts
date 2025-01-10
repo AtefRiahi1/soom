@@ -34,6 +34,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ListEmployeEntrepriseComponent } from './employe/list-employe-entreprise/list-employe-entreprise.component';
+import { ProfileComponent } from './profile/profile.component';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { ListEmployeEntrepriseComponent } from './employe/list-employe-entrepris
   
     SignInComponent,
          SignUpComponent,
-         ListEmployeEntrepriseComponent
+         ListEmployeEntrepriseComponent,
+         ProfileComponent
   ],
   imports: [
     CommonModule,

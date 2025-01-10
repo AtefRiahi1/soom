@@ -1,0 +1,15 @@
+<div class="profile-container" *ngIf="user">
+    <h1 class="profile-title">{{ userType === 'admin' ? 'Admin ' : userType === 'entreprise' ? 'Entreprise ' : userType === 'employe' ? 'Employé ' : '' }} Profile</h1>
+    <div class="profile-info">
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p *ngIf="userType=='employe'"><strong>Entreprise:</strong> {{ user.entreprise.name }}</p>
+
+    </div>
+  <!--  <a routerLink="/edit-profile" class="edit-profile-link">Edit Profile</a>-->
+</div>
+
+<div class="error-message-container" *ngIf="errorMessage">
+    <p class="error-message">{{ errorMessage }}</p>
+</div>
+
+

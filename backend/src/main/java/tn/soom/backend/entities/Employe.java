@@ -36,7 +36,6 @@ public class Employe implements UserDetails {
 
     @ManyToOne
     @JoinColumn(name = "entreprise_id")
-    @JsonIgnore
     private Entreprise entreprise;
 
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)

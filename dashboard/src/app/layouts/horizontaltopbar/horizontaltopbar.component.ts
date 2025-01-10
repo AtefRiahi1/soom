@@ -11,6 +11,11 @@ import { DOCUMENT } from '@angular/common';
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
 import { environment } from '../../../environments/environment';
+import { AdminSessionService } from 'src/app/core/services/admin-session.service';
+import { EntrepriseService } from 'src/app/core/services/entreprise.service';
+import { EmployeService } from 'src/app/core/services/employe.service';
+import { EntrepriseSessionService } from 'src/app/core/services/entreprise-session.service';
+import { EmployeSessionService } from 'src/app/core/services/employe-session.service';
 
 
 @Component({
@@ -47,7 +52,9 @@ export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
   constructor(@Inject(DOCUMENT) private document: any, private router: Router, private eventService: EventService,
     public languageService: LanguageService, 
     // tslint:disable-next-line: variable-name
-    public _cookiesService: CookieService) {
+    public _cookiesService: CookieService,private adminSessionService:AdminSessionService,
+                  private entrepriseService:EntrepriseService,private employeService:EmployeService,
+                  private entrepriseSessionService:EntrepriseSessionService,private employeSessionService:EmployeSessionService) {
     router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.activateMenu();
@@ -55,31 +62,40 @@ export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
     });
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
+
+
     this.userType = localStorage.getItem('userType');
     const userEmail = localStorage.getItem('userMail');
 
     const userType = localStorage.getItem('userType');
     const sessionId = localStorage.getItem('sessionId');
+    this.checkSessionActive(userType,sessionId);
 
 
     if (this.userType && userEmail) {
-      if (this.userType === 'user') {
+      if (this.userType === 'admin') {
+        this.fetchAdminProfile(userEmail);
 
 
+      } else if (this.userType === 'entreprise') {
 
-      } else if (this.userType === 'worker') {
+        this.fetchEntrepriseProfile(userEmail);
 
+      } else if (this.userType === 'employe') {
 
+        this.fetchEmployeProfile(userEmail);
 
-      } else {
-        this.errorMessage = 'Invalid user type.';
+      }
+      else {
+        this.errorMessage = "Type d'utilisateur invalide.";
       }
     } else {
-      this.errorMessage = 'User information not found in local storage.';
+      this.errorMessage = 'Informations utilisateur introuvables dans le stockage local.';
     }
   /*  this.initialize(this.user);
     console.log(this.user)*/
+
 
   }
 
@@ -271,19 +287,21 @@ export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
   /**
    * Initialize
    */
-  initialize(user: string): void {
-    if (user && user) {
-      this.menuItems = MENU.filter(item => {
-        //console.log(item);
-        return !item.roles || item.roles.includes(user);
-
-      });
-    } else {
-      // If user role is not provided or user is not defined, show all menu items
-      this.menuItems = MENU;
+  initialize(userAuthorities: string[]): void {
+      console.log(userAuthorities)
+      if (userAuthorities && userAuthorities.length > 0) {
+        console.log(userAuthorities)
+        this.menuItems = MENU.filter(item => {
+          // Vérifiez si l'élément du menu est destiné à au moins une des autorités de l'utilisateur
+          return (
+            !item.roles || item.roles.some(role => userAuthorities.includes(role))
+          );
+        });
+      } else {
+        // Si aucune autorité n'est fournie, affichez tous les éléments de menu
+        this.menuItems = MENU;
+      }
     }
-
-  }
 
   /**
    * Returns true or false if given menu item has child or not
@@ -292,6 +310,84 @@ export class HorizontaltopbarComponent implements OnInit, AfterViewInit {
   hasItems(item: MenuItem) {
     return item.subItems !== undefined ? item.subItems.length > 0 : false;
   }
+
+  private fetchAdminProfile(email: string): void {
+    this.adminSessionService.getAdminByEmail(email).subscribe(
+      (data) => {
+        this.user = data;
+        console.log(this.user.role);
+        const authorities = this.user.authorities.map((auth: any) => auth.authority);
+        this.initialize(authorities); // Convert to array for consistency
+      },
+      (error) => {
+        console.error('Error fetching user data', error);
+        this.errorMessage = "Erreur lors de la récupération des données d'administrateur. Veuillez réessayer plus tard.";
+      }
+    );
+  }
+  
+  private fetchEntrepriseProfile(email: string): void {
+    this.entrepriseService.getEntrepriseByEmail(email).subscribe(
+      (data) => {
+        this.user = data;
+        console.log(this.user.role);
+        const authorities = this.user.authorities.map((auth: any) => auth.authority);
+        this.initialize(authorities); // Convert to array for consistency
+      },
+      (error) => {
+        console.error('Error fetching user data', error);
+        this.errorMessage = "Erreur lors de la récupération des données de l'entreprise. Veuillez réessayer plus tard.";
+      }
+    );
+  }
+  
+  private fetchEmployeProfile(email: string): void {
+    this.employeService.getEmployeByEmail(email).subscribe(
+      (data) => {
+        this.user = data;
+        console.log(this.user.role);
+        const authorities = this.user.authorities.map((auth: any) => auth.authority); // Extract all authorities
+        this.initialize(authorities);
+      },
+      (error) => {
+        console.error('Error fetching user data', error);
+        this.errorMessage = "Erreur lors de la récupération des données de l'employé. Veuillez réessayer plus tard.";
+      }
+    );
+  }
+  
+
+  checkSessionActive(userType: string, sessionId: string): void {
+    const id = Number(sessionId);
+
+    if (userType === 'admin') {
+      this.adminSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    }else if (userType === 'entreprise') {
+      this.entrepriseSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    }
+     else if (userType === 'employe') {
+      this.employeSessionService.isSessionActive(id).subscribe((isActive: boolean) => {
+        if(isActive==false){
+          localStorage.clear();
+          this.router.navigateByUrl('/signin');
+        }
+      });
+    } else {
+      localStorage.clear();
+      this.router.navigateByUrl('/signin');
+    }
+  }
+
 
   
 

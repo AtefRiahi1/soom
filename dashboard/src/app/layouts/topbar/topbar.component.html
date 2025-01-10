@@ -5,19 +5,19 @@
       <div class="navbar-brand-box">
         <a routerLink="/" class="logo logo-dark">
           <span class="logo-sm">
-            <img src="assets/images/images.png" alt="" height="70px" width="100px">
+            <img [src]="logoUrl" alt="" height="70px" >
           </span>
           <span class="logo-lg">
-            <img src="assets/images/images.png" alt="" height="90px" width="100px">
+            <img [src]="logoUrl" alt="" height="90px" >
           </span>
         </a>
 
         <a routerLink="/" class="logo logo-light">
           <span class="logo-sm">
-            <img src="assets/images/images.png" alt="" height="70px" width="100px">
+            <img [src]="logoUrl" alt="" height="70px" >
           </span>
           <span class="logo-lg">
-            <img src="assets/images/images.png" alt="" height="90px" width="100px">
+            <img [src]="logoUrl" alt="" height="90px" >
           </span>
         </a>
       </div>
@@ -95,24 +95,8 @@
               <div class="d-flex" [ngStyle]="{ 'background-color': notification.read ? '#f8f9fa' : 'transparent' }">
                 <div class="avatar-xs me-3">
         <span class="avatar-title rounded-circle font-size-16"
-              [ngStyle]="{
-                  'background-color': notification.title.toLowerCase().includes('projet') ? '#007bff' :
-                                     notification.title.toLowerCase().includes('cahier') ? '#f0cc1a' :
-                                     notification.title.toLowerCase().includes('réclamation') ? '#a11616' :
-                                     notification.title.toLowerCase().includes('commande') ? '' :
-                                     (notification.title.toLowerCase().includes('devis') || notification.title.toLowerCase().includes('avis')) ? '#28a745' :
-                                     'gray'
-              }">
-          <i *ngIf="notification.title.toLowerCase().includes('projet')" class="bx bx-cart" style="color:white;"></i>
-          <i *ngIf="notification.title.toLowerCase().includes('cahier')" class="bx bx-file" style="color: white;"></i>
-          <i *ngIf="notification.title.toLowerCase().includes('réclamation')" class="bx bx-file" style="color: white;"></i>
-          <i *ngIf="notification.title.toLowerCase().includes('avis')" class="bx bx-file" style="color: white;"></i>
-          <i *ngIf="notification.title.toLowerCase().includes('commande')" class="bx bx-file" style="color: white;"></i>
-          <i *ngIf="!(notification.title.toLowerCase().includes('projet') ||
-                     notification.title.toLowerCase().includes('cahier') ||
-                     notification.title.toLowerCase().includes('commande') ||
-                     notification.title.toLowerCase().includes('réclamation') ||
-                     notification.title.toLowerCase().includes('avis'))" class="bx bx-question-mark" style="color: white;"></i>
+              >
+              <i class="bx bx-bell" style="color: white;"></i>
         </span>
                 </div>
                 <div class="flex-grow-1" (click)="markAsRead(notification)">
@@ -137,7 +121,11 @@
       <div class="dropdown d-inline-block" dropdown>
         <button type="button" class="btn header-item" dropdownToggle id="page-header-user-dropdown">
           <img class="rounded-circle header-profile-user" src="assets/images/users/avatar-2.jpg" alt="Header Avatar">
-        <!--  <span class="d-none d-xl-inline-block ms-1">{{ userType === 'user' ? '' : 'Worker ' }}{{ user.firstName }} {{ user.lastName }}</span>-->
+          <span class="d-none d-xl-inline-block ms-1">
+            {{ userType === 'admin' ? 'Admin ' : userType === 'entreprise' ? 'Entreprise ' : userType === 'employe' ? 'Employé ' : '' }}
+            {{ user.email }}
+          </span>
+          
           <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
         </button>
         <div class="dropdown-menu dropdown-menu-end" *dropdownMenu>
