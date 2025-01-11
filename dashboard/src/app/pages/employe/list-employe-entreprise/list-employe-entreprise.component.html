@@ -99,7 +99,7 @@
                           <option *ngFor="let module of listmoduleAppTrue" [value]="module.id">{{ module.nom }}</option>
                         </optgroup>
                         <!-- Modules avec app=false (affichés uniquement si CRM est sélectionné) -->
-                        <optgroup *ngIf="showAdditionalModules" label="Modules additionnels">
+                        <optgroup *ngIf="showAdditionalModules" label="Modules CRM">
                           <option *ngFor="let module of listmoduleAppFalse" [value]="module.id">{{ module.nom }}</option>
                         </optgroup>
                       </select>
