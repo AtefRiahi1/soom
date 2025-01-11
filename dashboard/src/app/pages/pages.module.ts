@@ -35,6 +35,7 @@ import { SignInComponent } from './sign-in/sign-in.component';
 import { SignUpComponent } from './sign-up/sign-up.component';
 import { ListEmployeEntrepriseComponent } from './employe/list-employe-entreprise/list-employe-entreprise.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ListNotificationComponent } from './list-notification/list-notification.component';
 
 
 @NgModule({
@@ -44,7 +45,8 @@ import { ProfileComponent } from './profile/profile.component';
     SignInComponent,
          SignUpComponent,
          ListEmployeEntrepriseComponent,
-         ProfileComponent
+         ProfileComponent,
+         ListNotificationComponent
   ],
   imports: [
     CommonModule,

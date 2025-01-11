@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ListEmployeEntrepriseComponent } from './employe/list-employe-entreprise/list-employe-entreprise.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ListNotificationComponent } from './list-notification/list-notification.component';
 
 
 
@@ -14,6 +15,7 @@ const routes: Routes = [
   },
   { path: 'employes', component: ListEmployeEntrepriseComponent },
   { path: 'profile', component: ProfileComponent },
+  { path: 'notifications', component: ListNotificationComponent },
 
   
 
