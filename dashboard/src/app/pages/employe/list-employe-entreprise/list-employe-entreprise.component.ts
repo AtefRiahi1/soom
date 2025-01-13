@@ -25,6 +25,8 @@ export class ListEmployeEntrepriseComponent {
     listmoduleAppFalse: any[] = [];
     showAdditionalModules: boolean = false; // Flag to show additional modules
     addForm!: FormGroup;
+    editForm!: FormGroup;
+currentEmployeId: number | null = null;
 
     private errorMessage: string = '';
 
@@ -66,6 +68,11 @@ export class ListEmployeEntrepriseComponent {
         email: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required],
         moduleIds: [[], Validators.required],
+      });
+      this.editForm = this.fb.group({
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', Validators.required],
+        moduleIds: [[]],
       });
   }
 
@@ -218,6 +225,69 @@ export class ListEmployeEntrepriseComponent {
       }
     );
 }
+
+editModal(employeId: number): void {
+  console.log('Employe ID:', employeId);
+  this.currentEmployeId = employeId;
+
+  const employe = this.employes.find((e) => e.id === employeId);
+
+  if (employe) {
+    // Pré-remplir le formulaire avec les données de l'employé, y compris les modules associés
+    this.editForm.patchValue({
+      email: employe.email,
+      password: employe.password,
+      moduleIds: employe.modules
+        .filter((module: any) => module.status) // Filtrer pour ne garder que les modules avec status true
+        .map((module: any) => module.module.id) // Associer les modules
+    });
+    this.edit?.show();
+  }
+}
+
+onUpdateEmploye(): void {
+  if (this.editForm.invalid) return;
+
+  const formValues = this.editForm.value;
+  const employeData = {
+    email: formValues.email,
+    password: formValues.password,
+  };
+  
+  // Trouver l'employé courant
+  const employe = this.employes.find((e) => e.id === this.currentEmployeId);
+  
+  // Modules à ajouter : ceux qui ne sont pas associés ou ceux qui sont associés mais avec status false
+  const addModuleIds = formValues.moduleIds.filter(id => {
+    const existingModule = employe.modules.find((m: any) => m.module.id === id);
+    return !existingModule || (existingModule && !existingModule.status);
+  });
+
+  // Modules à supprimer : ceux qui sont associés mais non sélectionnés
+  const removeModuleIds = employe.modules
+    .filter((m: any) => !formValues.moduleIds.includes(m.module.id))
+    .map((m: any) => m.module.id);
+
+  // Appel au service pour mettre à jour l'employé
+  this.employeService.manageEmployeData(employe.id, employeData, addModuleIds, removeModuleIds).subscribe(
+    (response) => {
+      Swal.fire({
+        title: 'Employé mis à jour!',
+        icon: 'success',
+        text: 'Les informations de l\'employé ont été mises à jour avec succès.',
+      }).then(() => this.edit?.hide());
+    },
+    (error) => {
+      console.error(error);
+      Swal.fire({
+        title: 'Erreur!',
+        icon: 'error',
+        text: 'Une erreur est survenue lors de la mise à jour de l\'employé.',
+      });
+    }
+  );
+}
+
 
   
 }

@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="d-flex justify-content-end">
-        <button type="button" class="btn btn-success" (click)="addModal()">+ Ajouter</button>
+        <button *ngIf="userType === 'entreprise'" type="button" class="btn btn-success" (click)="addModal()">+ Ajouter</button>
         
       </div>
     </div>
@@ -33,7 +33,7 @@
                         'badge-soft-warning': !data.isverified,
                         'badge-soft-success': data.isverified
                       }">
-                  {{data.annuler ? 'Vérifié' : 'En attente'}}
+                  {{data.isverified ? 'Vérifié' : 'En attente'}}
                 </span>
               </td>
               <td>{{data.createdAt | date:'yyyy-MM-dd HH:mm'}}</td>
@@ -41,7 +41,7 @@
               
               <td>
                 <div class="d-flex gap-3">
-                  <a href="javascript:void(0);" class="text-success" (click)="editModal(data.idOrder)"><i class="mdi mdi-pencil font-size-18"></i></a>
+                  <a *ngIf="userType === 'entreprise'" href="javascript:void(0);" class="text-success" (click)="editModal(data.id)"><i class="mdi mdi-pencil font-size-18"></i></a>
                   <a *ngIf="userType === 'entreprise'" href="javascript:void(0);" class="text-danger" (click)="bloquer(data.id)">
                     <i class="mdi font-size-18" [ngClass]="{'mdi-cancel': data.status, 'text-primary mdi-undo': !data.status}"></i>
                   </a>
@@ -119,5 +119,42 @@
           </div>
         </div>
       </div>
-      
-      
+
+  <!------------------------------------------------------------------------------------------------->
+  <div bsModal #edit="bs-modal" class="modal fade" id="edit" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Modifier un employé</h5>
+          <button type="button" class="btn-close" id="close-modal" (click)="edit.hide()"></button>
+        </div>
+        <div class="modal-body">
+          <form (ngSubmit)="onUpdateEmploye()" [formGroup]="editForm" class="needs-validation" novalidate>
+            <div class="mb-3">
+              <label for="email-field" class="form-label">Email</label>
+              <input type="email" id="email-field" class="form-control" required formControlName="email" />
+            </div>
+            <div class="mb-3">
+              <label for="module-select" class="form-label">Modules</label>
+              <select
+                id="module-select"
+                class="form-control"
+                multiple
+                formControlName="moduleIds">
+                <optgroup label="Modules disponibles">
+                  <option *ngFor="let module of listmoduleAppTrue" [value]="module.id">{{ module.nom }}</option>
+                </optgroup>
+                <optgroup label="Modules CRM">
+                  <option *ngFor="let module of listmoduleAppFalse" [value]="module.id">{{ module.nom }}</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="text-end">
+              <button type="button" class="btn btn-outline-secondary me-1" (click)="edit.hide()">Annuler</button>
+              <button type="submit" class="btn btn-success">Mettre à jour</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

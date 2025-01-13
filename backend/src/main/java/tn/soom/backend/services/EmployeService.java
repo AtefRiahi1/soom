@@ -100,9 +100,6 @@ public class EmployeService {
         if (updatedEmploye.getEmail() != null) {
             employe.setEmail(updatedEmploye.getEmail());
         }
-        if (updatedEmploye.getPassword() != null) {
-            employe.setPassword(passwordEncoder.encode(updatedEmploye.getPassword()));
-        }
 
         if (addModuleIds != null && !addModuleIds.isEmpty()) {
             for (Integer moduleId : addModuleIds) {
@@ -152,6 +149,7 @@ public class EmployeService {
             notification.setMessage("Le module " + module.getNom() + " a été assigné à l'employé " + employe.getEmail() + ".");
             notification.setCreatedBy(employe.getEntreprise().getName());
             notification.setAdminERP(admin);
+            notification.setEmploye(employe);
             notification.setRead(false);
             notificationRepository.save(notification);
         }
