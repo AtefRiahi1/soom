@@ -275,7 +275,7 @@ onUpdateEmploye(): void {
         title: 'Employé mis à jour!',
         icon: 'success',
         text: 'Les informations de l\'employé ont été mises à jour avec succès.',
-      }).then(() => this.edit?.hide());
+      }).then(() => {this.edit?.hide();location.reload();});
     },
     (error) => {
       console.error(error);
@@ -286,6 +286,47 @@ onUpdateEmploye(): void {
       });
     }
   );
+}
+
+verif(id: number): void {
+  Swal.fire({
+    title: 'Vous êtes sûr(e) ?',
+    text: "Vous ne pourrez pas revenir en arrière !",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Oui!',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      this.employeService.updateEmployeVerif(id).subscribe({
+        next: (data: any) => {
+          if (data.status) {
+            Swal.fire({
+              title: 'Vérifié!',
+              text: "Ce compte est vérifié.",
+              icon: 'success',
+            });
+          } else {
+            Swal.fire({
+              title: 'En attente!',
+              text: "Ce compte est en attente.",
+              icon: 'success',
+            });
+          }
+          location.reload();
+        },
+        error: (err) => {
+          console.log(err);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Une erreur est survenue!',
+          });
+        }
+      });
+    }
+  });
 }
 
 

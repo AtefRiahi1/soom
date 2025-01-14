@@ -1,0 +1,33 @@
+<div class="container-fluid">
+    <app-page-title title="Modules"></app-page-title>
+    <div class="search-box me-2 mb-2 d-inline-block">
+        <div class="position-relative">
+          <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchModuleEmploye" (input)="searchEmployeBy()">
+          <i class="bx bx-search-alt search-icon"></i>
+        </div>
+      </div>
+  
+    <div class="row">
+      <div class="col-md-4" *ngFor="let moduleEmploye of modulesEmploye | paginate: { itemsPerPage: itemsPerPage, currentPage: p };" >
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">{{ moduleEmploye.module.nom }}</h5>
+            <p class="card-text">
+              Prix: {{ moduleEmploye.module.prix }} Dt<br />
+              Statut: <span [ngClass]="{ 'text-success': moduleEmploye.status, 'text-danger': !moduleEmploye.status }">
+                {{ moduleEmploye.status ? 'Actif' : 'Inactif' }}
+              </span>
+            </p>
+            <p class="card-text">
+              Payé: <span [ngClass]="{ 'text-success': moduleEmploye.paye, 'text-danger': !moduleEmploye.paye }">
+                {{ moduleEmploye.paye ? 'Oui' : 'Non' }}
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pagination-container">
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>

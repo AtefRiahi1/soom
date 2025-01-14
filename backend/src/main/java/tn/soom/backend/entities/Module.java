@@ -21,4 +21,6 @@ public class Module {
     private Double prix;
 
     private Boolean app;
+
+    private String path;
 }

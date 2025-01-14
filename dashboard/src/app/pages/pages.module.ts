@@ -36,6 +36,8 @@ import { SignUpComponent } from './sign-up/sign-up.component';
 import { ListEmployeEntrepriseComponent } from './employe/list-employe-entreprise/list-employe-entreprise.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ListNotificationComponent } from './list-notification/list-notification.component';
+import { ListModuleEmployeByEmployeComponent } from './list-module-employe-by-employe/list-module-employe-by-employe.component';
+import { ListModuleEmployeEntrepriseComponent } from './list-module-employe-entreprise/list-module-employe-entreprise.component';
 
 
 @NgModule({
@@ -46,7 +48,9 @@ import { ListNotificationComponent } from './list-notification/list-notification
          SignUpComponent,
          ListEmployeEntrepriseComponent,
          ProfileComponent,
-         ListNotificationComponent
+         ListNotificationComponent,
+         ListModuleEmployeByEmployeComponent,
+         ListModuleEmployeEntrepriseComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,71 @@
+<div class="container-fluid">
+    <app-page-title title="Modules"></app-page-title>
+    <div class="search-box me-2 mb-2 d-inline-block">
+        <div class="position-relative">
+          <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchModuleEmploye" (input)="searchEmployeBy()">
+          <i class="bx bx-search-alt search-icon"></i>
+        </div>
+      </div>
+  
+    <div class="row">
+      <div class="col-md-4" *ngFor="let moduleEmploye of modulesEmploye | paginate: { itemsPerPage: itemsPerPage, currentPage: p };" >
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title">{{ moduleEmploye.module.nom }}</h5>
+            <p class="card-text">
+              Prix: {{ moduleEmploye.module.prix }} Dt<br />
+              Statut: <span [ngClass]="{ 'text-success': moduleEmploye.status, 'text-danger': !moduleEmploye.status }">
+                {{ moduleEmploye.status ? 'Actif' : 'Inactif' }}
+              </span>
+            </p>
+            <p class="card-text">
+              Payé: <span [ngClass]="{ 'text-success': moduleEmploye.paye, 'text-danger': !moduleEmploye.paye }">
+                {{ moduleEmploye.paye ? 'Oui' : 'Non' }}
+              </span>
+            </p>
+            <button *ngIf="!moduleEmploye.module.app" class="btn btn-primary" (click)="editModal(moduleEmploye.id)">
+                Changer les permissions
+              </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pagination-container">
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
+  <!-------------------------------------------------------------------------------------------------------->
+  <div bsModal #edit="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel">Modifier les permissions</h5>
+          <button type="button" class="btn-close" (click)="edit?.hide()" aria-label="Close">
+          </button>
+        </div>
+        <div class="modal-body">
+          <div *ngIf="selectedModule">
+            <label>
+              <input type="checkbox" [(ngModel)]="selectedModule.consulter" /> Consulter
+            </label>
+            <br />
+            <label>
+              <input type="checkbox" [(ngModel)]="selectedModule.modifier" /> Modifier
+            </label>
+            <br />
+            <label>
+              <input type="checkbox" [(ngModel)]="selectedModule.ajouter" /> Ajouter
+            </label>
+            <br />
+            <label>
+              <input type="checkbox" [(ngModel)]="selectedModule.supprimer" /> Supprimer
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="edit?.hide()">Annuler</button>
+          <button type="button" class="btn btn-primary" (click)="updatePermissions()">Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  </div>
