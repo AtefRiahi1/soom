@@ -1,0 +1,64 @@
+<div class="container-fluid">
+    <app-page-title title="Entreprises"></app-page-title>
+    <div class="d-flex flex-column col-sm-12 col-md-4">
+    
+        <div class="search-box me-2 mb-2 d-inline-block">
+          <div class="position-relative">
+            <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchEntreprise" (input)="searchEntrepriseBy()">
+            <i class="bx bx-search-alt search-icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+      <div class="table-responsive mb-0">
+        <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
+          <thead class="table-light">
+            <tr >
+              <th class="align-middle">Logo</th>
+              <th class="align-middle">Nom</th>
+              <th class="align-middle">Email</th>
+              <th class="align-middle">Téléphone</th>
+              <th class="align-middle">Adresse</th>
+              <th class="align-middle">État</th>
+              <th class="align-middle">Date de création</th>
+              <th class="align-middle">Employés</th>
+              <th class="align-middle">Action</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let data of entreprises | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index;" id="o_{{data.id}}">
+            <tr>
+              <td><img [src]="logoUrl" alt="" style="width: 50px; height: auto;"></td>
+              <td>{{data.name}}</td>
+              <td>{{data.email}}</td>
+              <td>{{data.tel}}</td>
+              <td>{{data.address}}</td>
+              <td>
+                <span class="badge badge-pill font-size-11"
+                      [ngClass]="{ 
+                        'badge-soft-warning': !data.isverified,
+                        'badge-soft-success': data.isverified
+                      }">
+                  {{data.isverified ? 'Vérifié' : 'En attente'}}
+                </span>               
+              </td>
+              <td>{{data.createdAt | date:'yyyy-MM-dd HH:mm'}}</td>
+              <td>
+                <a [routerLink]="['/employes',data.id]" class="list-group-item" style="cursor: pointer;"><i class="fas fa-folder"></i></a>
+              </td>
+              
+              
+              <td>
+                <div class="d-flex gap-3">
+                  <a href="javascript:void(0);" class="text-danger" (click)="bloquer(data.id)">
+                    <i class="mdi font-size-18" [ngClass]="{'mdi-cancel': data.isverified, 'text-primary mdi-undo': !data.isverified}"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+      <div class="pagination-container">
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </div>

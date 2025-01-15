@@ -1,5 +1,6 @@
 package tn.soom.backend.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +25,7 @@ public class ModuleEmploye {
 
     @ManyToOne
     @JoinColumn(name = "employe_id", nullable = false)
-    @JsonIgnore
+    @JsonManagedReference
     private Employe employe;
 
     @ManyToOne

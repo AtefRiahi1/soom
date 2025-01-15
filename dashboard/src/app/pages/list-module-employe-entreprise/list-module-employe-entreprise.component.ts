@@ -3,6 +3,7 @@ import { AdminSessionService } from 'src/app/core/services/admin-session.service
 import { EmployeService } from 'src/app/core/services/employe.service';
 import { EntrepriseService } from 'src/app/core/services/entreprise.service';
 import { ModuleEmployeService } from 'src/app/core/services/module-employe.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-list-module-employe-entreprise',
@@ -18,6 +19,7 @@ export class ListModuleEmployeEntrepriseComponent {
     userType: string | null = '';
     searchModuleEmploye: string = '';
     private errorMessage: string = '';
+    employeList: any[] = [];
   
   
     constructor(
@@ -65,6 +67,7 @@ export class ListModuleEmployeEntrepriseComponent {
         (data) => {
           this.user = data;
           this.getModuleEmploye(data.id);
+          this.getEmployes(data.id);
         },
         (error) => {
           console.error('Error fetching worker data', error);
@@ -91,6 +94,13 @@ export class ListModuleEmployeEntrepriseComponent {
         (error) => console.log(error)
       );
     }
+
+    getEmployes(id: any): void {
+      this.employeService.getEmployesByEntrepriseId(id).subscribe(
+        (employes) => this.employeList = employes,
+        (error) => console.log(error)
+      );
+    }
   
     searchEmployeBy(): void {
       if (this.searchModuleEmploye.trim() === '') {
@@ -101,5 +111,27 @@ export class ListModuleEmployeEntrepriseComponent {
         );
       }
     }
+
+    updateResponsable(moduleEmployeId: number, empId: number): void {
+      this.moduleEmployeServiec.updateModuleEmployeResponsable(moduleEmployeId, empId).subscribe(
+          response => {
+              console.log('Responsable mis à jour avec succès', response);
+              Swal.fire({
+                                title: 'Responsable Modifié!',
+                                icon: 'success',
+                                text: 'Responsable mis à jour avec succès.',
+                              });
+              // Vous pouvez ajouter une notification ou une logique pour rafraîchir les données ici
+          },
+          error => {
+            Swal.fire({
+                              title: 'Erreur!',
+                              icon: 'error',
+                              text: 'Une erreur est survenue lors de la mise à jour de reponsable.',
+                            });
+              console.error('Erreur lors de la mise à jour du responsable', error);
+          }
+      );
+  }
 
 }

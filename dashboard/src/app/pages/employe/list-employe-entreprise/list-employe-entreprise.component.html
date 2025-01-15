@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <app-page-title title="Commandes"></app-page-title>
+    <app-page-title title="Employes"></app-page-title>
     <div class="d-flex flex-column col-sm-12 col-md-4">
     
         <div class="search-box me-2 mb-2 d-inline-block">
@@ -29,20 +29,13 @@
             <tr>
               <td>{{data.email}}</td>
               <td>
-                <div class="d-flex gap-3">
                 <span class="badge badge-pill font-size-11"
                       [ngClass]="{ 
                         'badge-soft-warning': !data.isverified,
                         'badge-soft-success': data.isverified
                       }">
                   {{data.isverified ? 'Vérifié' : 'En attente'}}
-                </span>
-                <a *ngIf="userType === 'admin'" href="javascript:void(0);" class="text-danger" (click)="verif(data.id)">
-                  <i class="mdi font-size-18" 
-                     [ngClass]="{'mdi-check-circle text-success': !data.isverified, 'mdi-close-circle text-danger': data.isverified}">
-                  </i>
-                </a>                
-              </div>
+                </span>               
               </td>
               <td>{{data.createdAt | date:'yyyy-MM-dd HH:mm'}}</td>
               <td>

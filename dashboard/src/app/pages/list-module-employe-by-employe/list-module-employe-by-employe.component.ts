@@ -64,6 +64,7 @@ export class ListModuleEmployeByEmployeComponent {
     this.adminService.getAdminByEmail(email).subscribe(
       (data) => {
         this.user = data;
+        this.getModuleEmploye(this.idemp);
       },
       (error) => {
         console.error('Error fetching user data', error);

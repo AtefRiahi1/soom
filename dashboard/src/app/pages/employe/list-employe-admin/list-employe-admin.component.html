@@ -1,0 +1,55 @@
+<div class="container-fluid">
+    <app-page-title title="Employes"></app-page-title>
+    <div class="d-flex flex-column col-sm-12 col-md-4">
+    
+        <div class="search-box me-2 mb-2 d-inline-block">
+          <div class="position-relative">
+            <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchEmploye" (input)="searchEmployeBy()">
+            <i class="bx bx-search-alt search-icon"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+      <div class="table-responsive mb-0">
+        <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
+          <thead class="table-light">
+            <tr >
+              <th class="align-middle">Email</th>
+              <th class="align-middle">État administrative</th>
+              <th class="align-middle">Date de création</th>
+              <th class="align-middle">Modules</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let data of employes | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index;" id="o_{{data.id}}">
+            <tr>
+              <td>{{data.email}}</td>
+              <td>
+                <div class="d-flex gap-3">
+                <span class="badge badge-pill font-size-11"
+                      [ngClass]="{ 
+                        'badge-soft-warning': !data.isverified,
+                        'badge-soft-success': data.isverified
+                      }">
+                  {{data.isverified ? 'Vérifié' : 'En attente'}}
+                </span>
+                <a *ngIf="userType === 'admin'" href="javascript:void(0);" class="text-danger" (click)="verif(data.id)">
+                  <i class="mdi font-size-18" 
+                     [ngClass]="{'mdi-check-circle text-success': !data.isverified, 'mdi-close-circle text-danger': data.isverified}">
+                  </i>
+                </a>                
+              </div>
+              </td>
+              <td>{{data.createdAt | date:'yyyy-MM-dd HH:mm'}}</td>
+              <td>
+                <a [routerLink]="['/modules',data.id]" class="list-group-item" style="cursor: pointer;"><i class="fas fa-folder"></i></a>
+              </td>
+              
+              
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+      <div class="pagination-container">
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </div>

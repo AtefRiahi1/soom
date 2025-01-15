@@ -1,6 +1,8 @@
 package tn.soom.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,6 +47,7 @@ public class Employe implements UserDetails {
     private List<EmployeSession> employeSessions;
 
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("employe")
     private List<ModuleEmploye> modules= new ArrayList<>();
 
     @Override
