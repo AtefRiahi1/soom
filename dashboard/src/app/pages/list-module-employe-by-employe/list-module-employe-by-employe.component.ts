@@ -148,4 +148,40 @@ export class ListModuleEmployeByEmployeComponent {
       );
     }
   }
+
+  payer(id: number): void {
+        Swal.fire({
+          title: 'Vous êtes sûr(e) ?',
+          text: "Vous ne pourrez pas revenir en arrière !",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Oui!',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.moduleEmployeServiec.updateModuleEmployePaye(id).subscribe({
+              next: (data: any) => {
+                if (data.paye) {
+                  Swal.fire({
+                    title: 'Payé!',
+                    text: "Ce module est payé.",
+                    icon: 'success',
+                  });
+                } 
+                location.reload();
+              },
+              error: (err) => {
+                console.log(err);
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Une erreur est survenue!',
+                });
+              }
+            });
+          }
+        });
+      }
+
 }

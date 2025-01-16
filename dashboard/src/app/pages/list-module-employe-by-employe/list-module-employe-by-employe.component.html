@@ -23,6 +23,11 @@
                 {{ moduleEmploye.paye ? 'Oui' : 'Non' }}
               </span>
             </p>
+            <a *ngIf="userType === 'admin' && !moduleEmploye.paye" 
+                       class="text-success" 
+                       (click)="payer(moduleEmploye.id)">
+                        <i class="mdi mdi-cash font-size-18"></i>
+                    </a>
             <button *ngIf="!moduleEmploye.module.app && userType==='entreprise'" class="btn btn-primary" (click)="editModal(moduleEmploye.id)">
                 Changer les permissions
               </button>

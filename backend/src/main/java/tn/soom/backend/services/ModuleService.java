@@ -32,6 +32,8 @@ public class ModuleService {
             Module module = existingModule.get();
             module.setNom(updatedModule.getNom());
             module.setPrix(updatedModule.getPrix());
+            module.setApp(updatedModule.getApp());
+            module.setPath(updatedModule.getPath());
             return moduleRepository.save(module);
         } else {
             throw new IllegalArgumentException("Module non trouvé avec l'ID : " + id);

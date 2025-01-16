@@ -39,6 +39,15 @@ export const MENU: MenuItem[] = [
         roles: ['ADMIN']
       
      
+    },
+    {
+        id: 5,
+        label: 'Gestion des modules',
+        icon: 'bx-home-circle',
+        link: '/modulesadmin',
+        roles: ['ADMIN']
+      
+     
     }
 
 ];

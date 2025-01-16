@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AdminSessionService } from 'src/app/core/services/admin-session.service';
 import { EmployeService } from 'src/app/core/services/employe.service';
 import { EntrepriseService } from 'src/app/core/services/entreprise.service';
+import { FacturePayService } from 'src/app/core/services/facture-pay.service';
 import { ModuleService } from 'src/app/core/services/module.service';
 import Swal from 'sweetalert2';
 
@@ -28,6 +29,7 @@ export class ListEmployeAdminComponent {
       private adminService: AdminSessionService,
       private entrepriseService: EntrepriseService,
       private moduleService: ModuleService,
+      private factService:FacturePayService,
       private actR: ActivatedRoute
     ) {}
 
@@ -123,7 +125,7 @@ export class ListEmployeAdminComponent {
           if (result.isConfirmed) {
             this.employeService.updateEmployeVerif(id).subscribe({
               next: (data: any) => {
-                if (data.status) {
+                if (data.isverified) {
                   Swal.fire({
                     title: 'Vérifié!',
                     text: "Ce compte est vérifié.",
@@ -149,6 +151,26 @@ export class ListEmployeAdminComponent {
             });
           }
         });
+      }
+
+      fact(idemp:any): void {
+          this.factService.creerFacture(idemp).subscribe(
+            (response) => {
+              Swal.fire({
+                title: 'Facture générer!',
+                icon: 'success',
+                text: 'Facture générer et envoyer avec succès.',
+              });
+            },
+            (error) => {
+              console.log(error);
+              Swal.fire({
+                title: 'Erreur!',
+                icon: 'error',
+                text: 'Une erreur est survenue lors de la génération de facture.',
+              });
+            }
+          );
       }
     
 

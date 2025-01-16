@@ -123,7 +123,7 @@ export class ListEntrepriseComponent {
         if (result.isConfirmed) {
           this.entrepriseService.updateEntrepriseStatus(id).subscribe({
             next: (data: any) => {
-              if (data.status) {
+              if (!data.isverified) {
                 Swal.fire({
                   title: 'Bloqué!',
                   text: "Ce compte est bloqué.",

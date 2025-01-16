@@ -18,6 +18,7 @@
               <th class="align-middle">État administrative</th>
               <th class="align-middle">Date de création</th>
               <th class="align-middle">Modules</th>
+              <th class="align-middle">Facturation</th>
             </tr>
           </thead>
           <tbody *ngFor="let data of employes | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index;" id="o_{{data.id}}">
@@ -43,6 +44,11 @@
               <td>
                 <a [routerLink]="['/modules',data.id]" class="list-group-item" style="cursor: pointer;"><i class="fas fa-folder"></i></a>
               </td>
+              <td>
+                <a href="javascript:void(0);" class="list-group-item" (click)="fact(data.id)">
+                    <i class="fas fa-file-invoice"></i> <!-- Icône de facture -->
+                </a>
+            </td>
               
               
             </tr>

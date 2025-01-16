@@ -40,6 +40,7 @@ import { ListModuleEmployeByEmployeComponent } from './list-module-employe-by-em
 import { ListModuleEmployeEntrepriseComponent } from './list-module-employe-entreprise/list-module-employe-entreprise.component';
 import { ListEntrepriseComponent } from './list-entreprise/list-entreprise.component';
 import { ListEmployeAdminComponent } from './employe/list-employe-admin/list-employe-admin.component';
+import { ListModuleComponent } from './list-module/list-module.component';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { ListEmployeAdminComponent } from './employe/list-employe-admin/list-emp
          ListModuleEmployeByEmployeComponent,
          ListModuleEmployeEntrepriseComponent,
          ListEntrepriseComponent,
-         ListEmployeAdminComponent
+         ListEmployeAdminComponent,
+         ListModuleComponent
   ],
   imports: [
     CommonModule,
