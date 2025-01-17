@@ -41,6 +41,7 @@ import { ListModuleEmployeEntrepriseComponent } from './list-module-employe-entr
 import { ListEntrepriseComponent } from './list-entreprise/list-entreprise.component';
 import { ListEmployeAdminComponent } from './employe/list-employe-admin/list-employe-admin.component';
 import { ListModuleComponent } from './list-module/list-module.component';
+import { ListSessionEmployeComponent } from './list-session-employe/list-session-employe.component';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { ListModuleComponent } from './list-module/list-module.component';
          ListModuleEmployeEntrepriseComponent,
          ListEntrepriseComponent,
          ListEmployeAdminComponent,
-         ListModuleComponent
+         ListModuleComponent,
+         ListSessionEmployeComponent
   ],
   imports: [
     CommonModule,

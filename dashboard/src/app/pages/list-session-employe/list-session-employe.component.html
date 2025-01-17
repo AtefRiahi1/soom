@@ -1,0 +1,34 @@
+<div class="container-fluid">
+    <app-page-title title="Modules"></app-page-title>
+    <div class="search-box me-2 mb-2 d-inline-block">
+        <div class="position-relative">
+          <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchSessionEmploye" (input)="searchEmployeBy()">
+          <i class="bx bx-search-alt search-icon"></i>
+        </div>
+      </div>
+  
+      <div class="table-responsive mb-0">
+        <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
+            <thead class="table-light">
+                <tr>
+                    <th>Email</th>
+                <th>Début de Session</th>
+                <th>Fin de Session</th>
+                <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let userSession of sessionemployes | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+                <td>{{ userSession.employeemail }}</td>
+                <td>{{ userSession.sessionStart | date:'yyyy-MM-dd HH:mm' }}</td>
+                <td>{{ userSession.sessionEnd | date:'yyyy-MM-dd HH:mm' }}</td>
+                <td>
+                    <button *ngIf="(user.role === 'ENTREPRISE')&&userSession.sessionEnd==null" class="btn btn-danger" (click)="endSession(userSession.id)">Terminer la Session</button>
+                </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-container">
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </div>

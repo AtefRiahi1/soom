@@ -7,6 +7,7 @@ import { Page404Component } from './extrapages/page404/page404.component';
 import { SignInComponent } from './pages/sign-in/sign-in.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { SignUpComponent } from './pages/sign-up/sign-up.component';
+import { ListApplicationComponent } from './layouts/list-application/list-application.component';
 
 
 const routes: Routes = [
@@ -17,6 +18,7 @@ const routes: Routes = [
   //{ path: 'crypto-ico-landing', component: CyptolandingComponent },
   { path: 'signin', component: SignInComponent },
   { path: 'signup', component: SignUpComponent },
+  { path: 'applications', component: ListApplicationComponent },
 
   { path: '**', component: Page404Component },
 ];

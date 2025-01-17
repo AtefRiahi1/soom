@@ -8,6 +8,7 @@ import { ListModuleEmployeEntrepriseComponent } from './list-module-employe-entr
 import { ListEntrepriseComponent } from './list-entreprise/list-entreprise.component';
 import { ListEmployeAdminComponent } from './employe/list-employe-admin/list-employe-admin.component';
 import { ListModuleComponent } from './list-module/list-module.component';
+import { ListSessionEmployeComponent } from './list-session-employe/list-session-employe.component';
 
 
 
@@ -26,6 +27,7 @@ const routes: Routes = [
   { path: 'entreprises', component: ListEntrepriseComponent },
   { path: 'employes/:ident', component: ListEmployeAdminComponent },
   { path: 'modulesadmin', component: ListModuleComponent },
+  { path: 'sessionemploye', component: ListSessionEmployeComponent },
 
   
 

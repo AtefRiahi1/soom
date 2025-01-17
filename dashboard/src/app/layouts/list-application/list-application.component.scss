@@ -1,0 +1,16 @@
+.search-input {
+    padding-left: 40px; /* Espacement pour l'icône */
+}
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #999; /* Couleur de l'icône */
+}
+.card {
+    transition: transform 0.2s; /* Effet de transition */
+}
+.card:hover {
+    transform: scale(1.05); /* Effet de zoom au survol */
+}

@@ -143,7 +143,7 @@ currentEmployeId: number | null = null;
       if (result.isConfirmed) {
         this.employeService.updateEmployeStatus(id).subscribe({
           next: (data: any) => {
-            if (data.status) {
+            if (!data.status) {
               Swal.fire({
                 title: 'Bloqué!',
                 text: "Ce compte est bloqué.",
@@ -182,7 +182,7 @@ currentEmployeId: number | null = null;
     const selectedModuleIds = Array.from(selectedOptions).map((option: any) => option.value.split(':')[1].trim());  // Supprimer les espaces autour des IDs
     console.log('Selected Module IDs:', selectedModuleIds);  // Afficher les IDs sélectionnés pour déboguer
     
-    if (selectedModuleIds.includes('5')) {  // Vérifier si le CRM (ID 5) est sélectionné
+    if (selectedModuleIds.includes('1')) {  // Vérifier si le CRM (ID 5) est sélectionné
       this.showAdditionalModules = true;  // Afficher les modules additionnels
       console.log('true');
     } else {
@@ -213,7 +213,7 @@ currentEmployeId: number | null = null;
           title: 'Employé ajouté!',
           icon: 'success',
           text: 'L\'employé a été ajouté avec succès.',
-        }).then(() => this.add?.hide());
+        }).then(() =>{ this.add?.hide();location.reload();});
       },
       (error) => {
         console.log(error);

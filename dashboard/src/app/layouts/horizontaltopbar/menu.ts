@@ -15,6 +15,42 @@ export const MENU: MenuItem[] = [
         roles: ['ENTREPRISE']
       
      
+    },
+    {
+        id: 3,
+        label: 'Gestion des modules',
+        icon: 'bx-home-circle',
+        link: '/modules',
+        roles: ['ENTREPRISE']
+      
+     
+    },
+    {
+        id: 4,
+        label: 'Gestion des comptes',
+        icon: 'bx-home-circle',
+        link: '/entreprises',
+        roles: ['ADMIN']
+      
+     
+    },
+    {
+        id: 5,
+        label: 'Gestion des modules',
+        icon: 'bx-home-circle',
+        link: '/modulesadmin',
+        roles: ['ADMIN']
+      
+     
+    },
+    {
+        id: 3,
+        label: 'Gestion des sessions',
+        icon: 'bx-home-circle',
+        link: '/sessionemploye',
+        roles: ['ENTREPRISE']
+      
+     
     }
 
 ];

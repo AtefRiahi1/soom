@@ -21,6 +21,7 @@ public class AdminInitialization {
         logger.info("Initializing AdminInitialization bean...");
         try {
             adminService.createDefaultAdminIfNotExists();
+            adminService.createDefaultCRMIfNotExists();
             logger.info("Default admin created successfully.");
         } catch (Exception e) {
             logger.error("Error occurred during initialization: " + e.getMessage(), e);

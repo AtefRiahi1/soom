@@ -16,16 +16,21 @@ import { VerticalComponent } from './vertical/vertical.component';
 import { HorizontaltopbarComponent } from './horizontaltopbar/horizontaltopbar.component';
 import { LanguageService } from '../core/services/language.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { ListApplicationComponent } from './list-application/list-application.component';
+import { FormsModule } from '@angular/forms';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   // tslint:disable-next-line: max-line-length
-  declarations: [LayoutComponent, SidebarComponent, TopbarComponent, FooterComponent, RightsidebarComponent, HorizontalComponent, VerticalComponent, HorizontaltopbarComponent],
+  declarations: [LayoutComponent, SidebarComponent, TopbarComponent, FooterComponent, RightsidebarComponent, HorizontalComponent, VerticalComponent, HorizontaltopbarComponent, ListApplicationComponent],
   imports: [
     CommonModule,
     TranslateModule,
     RouterModule,
     BsDropdownModule.forRoot(),
     UIModule,
+    FormsModule,
+    NgxPaginationModule,
     SimplebarAngularModule
   ],
   providers: [LanguageService]

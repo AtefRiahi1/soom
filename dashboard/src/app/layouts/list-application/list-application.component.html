@@ -1,0 +1,27 @@
+<app-topbar></app-topbar>
+<div class="container-fluid" style="margin-top: 100px;">
+    <app-page-title title="Applications"></app-page-title>
+    
+    <div class="d-flex flex-column mb-3">
+        <div class="search-box me-2 d-inline-block">
+            <div class="position-relative">
+                <input type="text" class="form-control search-input" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchModule" (input)="searchEmployeBy()">
+                <i class="bx bx-search-alt search-icon"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4 col-sm-6 mb-4" *ngFor="let module of modules | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title">{{ module.module.nom }}</h5>
+                    <a (click)="openExternalApp(module.module.path)" class="btn btn-primary">Ouvrir l'application</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="pagination-container">
+    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>

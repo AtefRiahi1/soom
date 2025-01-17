@@ -25,7 +25,6 @@ public class ModuleEmploye {
 
     @ManyToOne
     @JoinColumn(name = "employe_id", nullable = false)
-    @JsonManagedReference
     private Employe employe;
 
     @ManyToOne

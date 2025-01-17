@@ -5,7 +5,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tn.soom.backend.entities.AdminERP;
+import tn.soom.backend.entities.Module;
 import tn.soom.backend.repositories.AdminERPRepo;
+import tn.soom.backend.repositories.ModuleRepo;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -16,6 +18,8 @@ public class AdminService {
     private PasswordEncoder passwordEncoder;
     @Autowired
     private AdminERPRepo adminERPRepo;
+    @Autowired
+    private ModuleRepo moduleRepo;
 
     @Transactional
     public void createDefaultAdminIfNotExists() {
@@ -30,6 +34,22 @@ public class AdminService {
             defaultAdmin.setUpdatedAt(LocalDateTime.now());
 
             adminERPRepo.save(defaultAdmin);
+        }
+    }
+
+    @Transactional
+    public void createDefaultCRMIfNotExists() {
+        Module module = moduleRepo.findByNom("CRM");
+
+        if (module == null) {
+            Module defaultModule = new Module();
+            defaultModule.setNom("CRM");
+            defaultModule.setApp(true);
+            defaultModule.setPath("/employes");
+            defaultModule.setPrix(0.0);
+            defaultModule.setId(1);
+
+            moduleRepo.save(defaultModule);
         }
     }
 

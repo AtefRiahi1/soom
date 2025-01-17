@@ -85,7 +85,7 @@ export class SignInComponent {
             this.employesessionservice.startSession(userMail).subscribe(
               (sessionResponse) => {
                 localStorage.setItem('sessionId', sessionResponse.id); // Save session ID in localStorage
-                this.router.navigate(['/employes']);
+                this.router.navigate(['/applications']);
               },
               (error) => {
                 this.errorMessage = 'Échec du démarrage de la session. Veuillez réessayer.';

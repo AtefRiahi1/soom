@@ -48,6 +48,15 @@ export const MENU: MenuItem[] = [
         roles: ['ADMIN']
       
      
+    },
+    {
+        id: 3,
+        label: 'Gestion des sessions',
+        icon: 'bx-home-circle',
+        link: '/sessionemploye',
+        roles: ['ENTREPRISE']
+      
+     
     }
 
 ];
