@@ -18,6 +18,11 @@ public class EntrepriseController {
     @Autowired
     private EntrepriseService entrepriseService;
 
+    @GetMapping("/recommended")
+    public List<Integer> getRecommendedModules(@RequestParam int moduleId) {
+        return entrepriseService.getRecommendedModules(moduleId);
+    }
+
     @GetMapping
     public ResponseEntity<List<Entreprise>> getAllEntreprises() {
         List<Entreprise> entreprises = entrepriseService.getAllEntreprises();

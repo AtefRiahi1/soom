@@ -28,6 +28,10 @@ export class ListEmployeEntrepriseComponent {
     editForm!: FormGroup;
 currentEmployeId: number | null = null;
 
+selectedModule: number | null = null; // Modifier pour permettre null
+  recommendedModules: any[] = [];
+  moduleMap: { [key: number]: string } = {};
+
     private errorMessage: string = '';
 
     @ViewChild('add', { static: false }) add?: ModalDirective;
@@ -62,6 +66,9 @@ currentEmployeId: number | null = null;
       this.moduleService.getAllModules().subscribe((res: any) => {
         this.listmoduleAppTrue = res.filter((module: any) => module.app === true);
         this.listmoduleAppFalse = res.filter((module: any) => module.app === false);
+        res.forEach((module: any) => {
+          this.moduleMap[module.id] = module.nom; // Associé l'ID au nom du module
+        });
       });
 
       this.addForm = this.fb.group({
@@ -112,6 +119,35 @@ currentEmployeId: number | null = null;
       }
     );
   }
+
+
+  onSubmit() {
+    if (!this.selectedModule) {
+      Swal.fire({
+        title: 'Erreur!',
+        text: 'Veuillez sélectionner un module avant de demander des recommandations.',
+        icon: 'error'
+      });
+      return;
+    }
+  
+    this.entrepriseService.getRecommendedModules(this.selectedModule)
+      .subscribe(modules => {
+        this.recommendedModules = modules;
+  
+        // Récupérer les noms des modules correspondants
+        const moduleNames = this.recommendedModules.map((id: number) => this.moduleMap[id]);
+        console.log('Noms des modules recommandés:', moduleNames); // Pour le débogage
+      }, error => {
+        console.error('Erreur lors de la récupération des modules recommandés:', error);
+        Swal.fire({
+          title: 'Erreur!',
+          text: 'Une erreur est survenue lors de la récupération des modules recommandés.',
+          icon: 'error'
+        });
+      });
+  }
+
 
   getEmployes(id: any): void {
     this.employeService.getEmployesByEntrepriseId(id).subscribe(
@@ -180,7 +216,8 @@ currentEmployeId: number | null = null;
   onModuleChange(selectedOptions: any): void {
     console.log(selectedOptions);
     const selectedModuleIds = Array.from(selectedOptions).map((option: any) => option.value.split(':')[1].trim());  // Supprimer les espaces autour des IDs
-    console.log('Selected Module IDs:', selectedModuleIds);  // Afficher les IDs sélectionnés pour déboguer
+    console.log('Selected Module IDs:', selectedModuleIds);  // Afficher les IDs sélectionnés pour 
+    this.selectedModule = selectedModuleIds.length > 0 ? selectedModuleIds[0] : null;
     
     if (selectedModuleIds.includes('1')) {  // Vérifier si le CRM (ID 5) est sélectionné
       this.showAdditionalModules = true;  // Afficher les modules additionnels

@@ -12,6 +12,10 @@ export class EntrepriseService {
 
   constructor(private http: HttpClient) {}
 
+  getRecommendedModules(moduleId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/recommended?moduleId=${moduleId}`);
+  }
+
   getAllEntreprises(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}`);
   }

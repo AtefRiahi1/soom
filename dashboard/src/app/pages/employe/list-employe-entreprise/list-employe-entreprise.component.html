@@ -98,15 +98,34 @@
                         multiple
                         formControlName="moduleIds"
                         (change)="onModuleChange($event.target.selectedOptions)">
-                        <!-- Modules avec app=true -->
                         <optgroup label="Modules disponibles">
                           <option *ngFor="let module of listmoduleAppTrue" [value]="module.id">{{ module.nom }}</option>
                         </optgroup>
-                        <!-- Modules avec app=false (affichés uniquement si CRM est sélectionné) -->
                         <optgroup *ngIf="showAdditionalModules" label="Modules CRM">
                           <option *ngFor="let module of listmoduleAppFalse" [value]="module.id">{{ module.nom }}</option>
                         </optgroup>
                       </select>
+                      <br>
+                      <button 
+  type="button" 
+  class="btn btn-primary rounded-pill shadow-sm d-flex align-items-center gap-2 px-4"
+  (click)="onSubmit()">
+  <i class="bi bi-magic"></i> <!-- Icône magique -->
+  Obtenir les recommandations
+</button>
+
+                      <!-- Recommendations Section -->
+<div *ngIf="recommendedModules.length" class="recommendation-section mt-4">
+  <h5 class="mb-3 text-primary"><i class="bi bi-lightbulb"></i> Modules recommandés :</h5>
+  <div class="d-flex flex-wrap gap-2">
+    <span
+      *ngFor="let moduleId of recommendedModules"
+      class="badge bg-success text-white px-3 py-2 rounded-pill shadow-sm">
+      {{ moduleMap[moduleId] }} <!-- Affiche le nom correspondant à l'ID -->
+    </span>
+  </div>
+</div>
+
                     </div>
                   </div>
       

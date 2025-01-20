@@ -2,6 +2,7 @@ package tn.soom.backend.services;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import tn.soom.backend.entities.AdminERP;
 import tn.soom.backend.entities.Employe;
 import tn.soom.backend.entities.Entreprise;
@@ -14,10 +15,17 @@ import java.util.Optional;
 public class EntrepriseService {
     private final EntrepriseRepo entrepriseRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RestTemplate restTemplate;
 
-    public EntrepriseService(EntrepriseRepo entrepriseRepository, PasswordEncoder passwordEncoder) {
+    public EntrepriseService(EntrepriseRepo entrepriseRepository, PasswordEncoder passwordEncoder,RestTemplate restTemplate) {
         this.entrepriseRepository = entrepriseRepository;
         this.passwordEncoder = passwordEncoder;
+        this.restTemplate = restTemplate;
+    }
+
+    public List<Integer> getRecommendedModules(int moduleId) {
+        String url = "http://localhost:5000/recommend?module_id=" + moduleId;
+        return restTemplate.getForObject(url, List.class);
     }
 
     public List<Entreprise> getAllEntreprises() {

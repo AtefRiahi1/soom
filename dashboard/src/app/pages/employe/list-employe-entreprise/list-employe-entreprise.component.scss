@@ -1,0 +1,39 @@
+.recommendation-section {
+    border-top: 2px solid #007bff; /* Ligne de séparation */
+    padding-top: 15px;
+  }
+  
+  .recommendation-section h5 {
+    display: flex;
+    align-items: center;
+    font-size: 1.2rem;
+  }
+  
+  .recommendation-section h5 i {
+    margin-right: 8px;
+    font-size: 1.4rem;
+  }
+  
+  .badge {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+  
+  .badge:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+  }
+  .btn {
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3; /* Couleur de survol */
+    transform: translateY(-2px); /* Légère élévation */
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); /* Ombre plus prononcée */
+  }
+  
+  .btn:active {
+    transform: translateY(1px); /* Effet d'appui */
+    box-shadow: none; /* Suppression de l'ombre */
+  }
+    
