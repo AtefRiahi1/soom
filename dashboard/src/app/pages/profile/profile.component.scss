@@ -1,0 +1,13 @@
+.edit-profile-button {
+    background-color: #007bff; /* Couleur de fond */
+    color: white;              /* Couleur du texte */
+    border: none;              /* Pas de bordure */
+    border-radius: 5px;       /* Coins arrondis */
+    padding: 10px 20px;       /* Espacement interne */
+    cursor: pointer;           /* Curseur en forme de main */
+    font-size: 16px;          /* Taille de police */
+}
+
+.edit-profile-button:hover {
+    background-color: #0056b3; /* Couleur au survol */
+}

@@ -64,4 +64,11 @@ public class EntrepriseController {
                     .body("Entreprise non trouvée pour l'email : " + email);
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Entreprise> updateEntreprise(@PathVariable Integer id,
+                                                       @RequestBody Entreprise updatedEntreprise) {
+        Entreprise entreprise = entrepriseService.updateEntreprise(id, updatedEntreprise);
+        return ResponseEntity.ok(entreprise);
+    }
 }

@@ -6,10 +6,55 @@
 
     </div>
   <!--  <a routerLink="/edit-profile" class="edit-profile-link">Edit Profile</a>-->
+  <button *ngIf="userType === 'entreprise'" (click)="editModal(user.id)" class="edit-profile-button">
+    Modifier le profil
+</button>
 </div>
 
 <div class="error-message-container" *ngIf="errorMessage">
     <p class="error-message">{{ errorMessage }}</p>
 </div>
 
+<!-------------------------------------------------------------------------------------------->
+<div bsModal #edit="bs-modal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modifier le profil</h5>
+                <button type="button" class="btn-close" (click)="edit.hide()"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="editForm" (ngSubmit)="onUpdateProfile()">
+                    <div class="mb-3">
+                        <label for="editName" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="editName" formControlName="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" formControlName="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAddress" class="form-label">Adresse</label>
+                        <input type="text" class="form-control" id="editAddress" formControlName="address" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTel" class="form-label">Téléphone</label>
+                        <input type="tel" class="form-control" id="editTel" formControlName="tel" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editLogo" class="form-label">Logo</label>
+                        <input type="file" class="form-control" (change)="onFileSelect($event)" required>
+                        <div *ngIf="logoUploadProgress > 0">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" [style.width]="logoUploadProgress + '%'" aria-valuenow="logoUploadProgress" aria-valuemin="0" aria-valuemax="100">{{ logoUploadProgress }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" (click)="edit.hide()">Annuler</button>
+                    <button type="submit" class="btn btn-success">Mettre à jour</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 

@@ -32,4 +32,8 @@ export class EntrepriseService {
   getEntrepriseByEmail(email: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${email}`);
   }
+
+  updateEntreprise(id: number, updatedEntreprise: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, updatedEntreprise);
+  }
 }

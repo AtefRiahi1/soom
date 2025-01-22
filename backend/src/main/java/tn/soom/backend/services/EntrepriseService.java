@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 import tn.soom.backend.entities.AdminERP;
 import tn.soom.backend.entities.Employe;
 import tn.soom.backend.entities.Entreprise;
+import tn.soom.backend.entities.Module;
 import tn.soom.backend.repositories.EntrepriseRepo;
 
 import java.util.List;
@@ -53,5 +54,20 @@ public class EntrepriseService {
 
     public Optional<Entreprise> getEntrepriseByEmail(String email) {
         return entrepriseRepository.findByEmail(email);
+    }
+
+    public Entreprise updateEntreprise(Integer id, Entreprise updatedEntreprise) {
+        Optional<Entreprise> existingEntreprise = entrepriseRepository.findById(id);
+        if (existingEntreprise.isPresent()) {
+            Entreprise entreprise = existingEntreprise.get();
+            entreprise.setAddress(updatedEntreprise.getAddress());
+            entreprise.setEmail(updatedEntreprise.getEmail());
+            entreprise.setLogo(updatedEntreprise.getLogo());
+            entreprise.setTel(updatedEntreprise.getTel());
+            entreprise.setName(updatedEntreprise.getName());
+            return entrepriseRepository.save(entreprise);
+        } else {
+            throw new IllegalArgumentException("Entreprise non trouvé avec l'ID : " + id);
+        }
     }
 }
