@@ -3,11 +3,9 @@ package tn.soom.backend.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tn.soom.backend.entities.Article;
-import tn.soom.backend.entities.Client;
 import tn.soom.backend.entities.Entreprise;
 import tn.soom.backend.entities.Notification;
-import tn.soom.backend.repositories.ArtiecleRepo;
-import tn.soom.backend.repositories.ClientRepo;
+import tn.soom.backend.repositories.ArticleRepo;
 import tn.soom.backend.repositories.EntrepriseRepo;
 import tn.soom.backend.repositories.NotificationRepo;
 
@@ -19,7 +17,7 @@ public class ArticleService {
     @Autowired
     private EntrepriseRepo entrepriseRepo;
     @Autowired
-    private ArtiecleRepo artiecleRepo;
+    private ArticleRepo artiecleRepo;
     @Autowired
     private NotificationRepo notificationRepository;
 

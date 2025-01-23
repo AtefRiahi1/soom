@@ -12,15 +12,14 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @ToString
-@Table(name = "articles")
-public class Article {
-
+@Table(name = "mouvements")
+public class Mouvement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    private String nom;
+    private String nomProduit;
     private Integer quantite;
+    private String type;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

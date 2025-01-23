@@ -52,6 +52,12 @@ public class Entreprise implements UserDetails {
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Article> articles;
 
+    @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Mouvement> mouvements;
+
+    @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommandeAchat> commandeAchats;
+
     @OneToMany(mappedBy = "entreprise")
     private List<EntrepriseSession> entrepriseSessions;
 
