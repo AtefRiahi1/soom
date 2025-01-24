@@ -13,22 +13,21 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @ToString
-@Table(name = "commandeAchats")
-public class CommandeAchat {
-
+@Table(name = "factureAchats")
+public class FactureAchat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String numCommande;
+    private String numFacture;
     @ElementCollection
-    @CollectionTable(name = "commande_achat_produits", joinColumns = @JoinColumn(name = "commande_achat_id"))
-    private List<ProductItem> produits;
+    @CollectionTable(name = "facture_achat_produits", joinColumns = @JoinColumn(name = "facture_achat_id"))
+    private List<FactureAchat.ProductItem> produits;
     private Double priceHt;
     private Double tva;
     private Double taxe;
     private Double netApayer;
-    private Boolean status;
-    private LocalDateTime deliveryDate;
+    private Boolean paye;
+    private LocalDateTime datePaiement;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

@@ -1,6 +1,5 @@
 package tn.soom.backend.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,18 +13,19 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @ToString
-@Table(name = "fournisseurs")
-public class Fournisseur {
-
+@Table(name = "receptionAchats")
+public class ReceptionAchat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    private String label;
-    private String nom;
-    private String email;
-    private String tel;
-    private String adresse;
+    private String numReception;
+    @ElementCollection
+    @CollectionTable(name = "reception_achat_produits", joinColumns = @JoinColumn(name = "reception_achat_id"))
+    private List<ReceptionAchat.ProductItem> produits;
+    private Double priceHt;
+    private Double tva;
+    private Double taxe;
+    private Double netApayer;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -33,14 +33,9 @@ public class Fournisseur {
     @JoinColumn(name = "entreprise_id")
     private Entreprise entreprise;
 
-    @OneToMany(mappedBy = "fournisseur", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CommandeAchat> commandeAchats;
-
-    @OneToMany(mappedBy = "fournisseur", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<FactureAchat> factureAchats;
-
-    @OneToMany(mappedBy = "fournisseur", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReceptionAchat> receptionAchats;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fournisseur_id")
+    private Fournisseur fournisseur;
 
     @PrePersist
     protected void onCreate() {
@@ -51,5 +46,14 @@ public class Fournisseur {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    @Embeddable
+    @Data
+    public static class ProductItem {
+        private String nom;
+        private int quantite;
+        private double prixUnitaire;
+        private double prix_total;
     }
 }

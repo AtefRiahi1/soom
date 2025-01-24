@@ -58,6 +58,7 @@ public class CommandeAchatService {
             commandeAchat.setNumCommande(updatedCommandeAchat.getNumCommande());
             commandeAchat.setProduits(updatedCommandeAchat.getProduits());
             commandeAchat.setTva(updatedCommandeAchat.getTva());
+            commandeAchat.setDeliveryDate(updatedCommandeAchat.getDeliveryDate());
             calculateTotalPrice(commandeAchat);
             calculatePriceHt(commandeAchat);
             calculateTax(commandeAchat);
@@ -74,6 +75,14 @@ public class CommandeAchatService {
 
     public List<CommandeAchat> findByEntrepriseId(Integer entrepriseId) {
         return commandeAchatRepo.findByEntrepriseId(entrepriseId);
+    }
+
+    public CommandeAchat updateCommandeStatus(Integer commandeId) {
+        CommandeAchat commandeAchat = commandeAchatRepo.findById(commandeId)
+                .orElseThrow(() -> new IllegalArgumentException("commande introuvable avec l'ID : " + commandeId));
+
+        commandeAchat.setStatus(!commandeAchat.getStatus());
+        return commandeAchatRepo.save(commandeAchat);
     }
 
     private void calculateTotalPrice(CommandeAchat commandeAchat) {

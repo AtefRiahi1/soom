@@ -11,9 +11,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tn.soom.backend.entities.CommandeAchat;
-import tn.soom.backend.entities.Entreprise;
+import tn.soom.backend.entities.FactureAchat;
 import tn.soom.backend.services.CommandeAchatService;
-import tn.soom.backend.services.MouvementService;
+import tn.soom.backend.services.FactureAchatService;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -24,43 +24,43 @@ import static java.nio.file.Files.copy;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @RestController
-@RequestMapping("/commandeachats")
-public class CommandeAchatController {
+@RequestMapping("/factureachats")
+public class FactureAchatController {
     @Autowired
-    private CommandeAchatService commandeAchatService;
+    private FactureAchatService factureAchatService;
     public static final String DIRECTORY = System.getProperty("user.home") + "/Downloads/uploads/";
 
     @PostMapping
-    public ResponseEntity<CommandeAchat> create(@RequestBody CommandeAchat commandeAchat,
-                                                @RequestParam Integer entrepriseId,
-                                                @RequestParam Integer fournisseurId,
-                                                @RequestParam String empEmail) {
-        CommandeAchat createdCommandeAchat = commandeAchatService.create(commandeAchat,entrepriseId,fournisseurId,empEmail);
-        return ResponseEntity.ok(createdCommandeAchat);
+    public ResponseEntity<FactureAchat> create(@RequestBody FactureAchat factureAchat,
+                                               @RequestParam Integer entrepriseId,
+                                               @RequestParam Integer fournisseurId,
+                                               @RequestParam String empEmail) {
+        FactureAchat createdFactureAchat = factureAchatService.create(factureAchat,entrepriseId,fournisseurId,empEmail);
+        return ResponseEntity.ok(createdFactureAchat);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CommandeAchat> findOne(@PathVariable Integer id) {
-        CommandeAchat commandeAchat = commandeAchatService.findOne(id);
-        return ResponseEntity.ok(commandeAchat);
+    public ResponseEntity<FactureAchat> findOne(@PathVariable Integer id) {
+        FactureAchat factureAchat = factureAchatService.findOne(id);
+        return ResponseEntity.ok(factureAchat);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CommandeAchat> update(@PathVariable Integer id, @RequestBody CommandeAchat updatedCommandeAchat,@RequestParam String empEmail) {
-        CommandeAchat commandeAchat = commandeAchatService.update(id, updatedCommandeAchat,empEmail);
-        return ResponseEntity.ok(commandeAchat);
+    public ResponseEntity<FactureAchat> update(@PathVariable Integer id, @RequestBody FactureAchat updatedFactureAchat,@RequestParam String empEmail) {
+        FactureAchat factureAchat = factureAchatService.update(id, updatedFactureAchat,empEmail);
+        return ResponseEntity.ok(factureAchat);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remove(@PathVariable Integer id) {
-        commandeAchatService.remove(id);
+        factureAchatService.remove(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/entreprise/{entrepriseId}")
-    public ResponseEntity<List<CommandeAchat>> findByEntrepriseId(@PathVariable Integer entrepriseId) {
-        List<CommandeAchat> commandes = commandeAchatService.findByEntrepriseId(entrepriseId);
-        return ResponseEntity.ok(commandes);
+    public ResponseEntity<List<FactureAchat>> findByEntrepriseId(@PathVariable Integer entrepriseId) {
+        List<FactureAchat> factures = factureAchatService.findByEntrepriseId(entrepriseId);
+        return ResponseEntity.ok(factures);
     }
 
     @PostMapping("/upload")
@@ -69,7 +69,7 @@ public class CommandeAchatController {
         String username = ((Authentication) authentication).getName();
 
 
-        Path userDirectory = Paths.get(DIRECTORY, username,"Commandes Achat").toAbsolutePath().normalize();
+        Path userDirectory = Paths.get(DIRECTORY, username,"Factures Achat").toAbsolutePath().normalize();
 
 
         if (!userDirectory.toFile().exists()) {
@@ -91,7 +91,7 @@ public class CommandeAchatController {
             @PathVariable String fileName,
             @RequestParam String email) {
 
-        Path userDirectory = Paths.get(DIRECTORY, email, "Commandes Achat").toAbsolutePath().normalize();
+        Path userDirectory = Paths.get(DIRECTORY, email, "Factures Achat").toAbsolutePath().normalize();
         Path imagePath = userDirectory.resolve(fileName);
 
         System.out.println("Resolved file path: " + imagePath.toString());
@@ -113,10 +113,9 @@ public class CommandeAchatController {
         return ResponseEntity.notFound().build();
     }
 
-    @PutMapping("/status/{commandeId}")
-    public ResponseEntity<CommandeAchat> updateCommandeStatus(@PathVariable Integer commandeId) {
-        CommandeAchat updatedCommandeAchat = commandeAchatService.updateCommandeStatus(commandeId);
-        return ResponseEntity.ok(updatedCommandeAchat);
+    @PutMapping("/paye/{factureId}")
+    public ResponseEntity<FactureAchat> updateFacturePaye(@PathVariable Integer factureId) {
+        FactureAchat updatedFactureAchat = factureAchatService.updateFactureStatus(factureId);
+        return ResponseEntity.ok(updatedFactureAchat);
     }
-
 }
