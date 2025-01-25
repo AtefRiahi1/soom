@@ -13,21 +13,19 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @ToString
-@Table(name = "commandeAchats")
-public class CommandeAchat {
-
+@Table(name = "commandes")
+public class Commande {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String numCommande;
     @ElementCollection
-    @CollectionTable(name = "commande_achat_produits", joinColumns = @JoinColumn(name = "commande_achat_id"))
-    private List<CommandeAchat.ProductItem> produits;
+    @CollectionTable(name = "commande_produits", joinColumns = @JoinColumn(name = "commande_id"))
+    private List<Commande.ProductItem> produits;
     private Double priceHt;
     private Double tva;
     private Double taxe;
     private Double netApayer;
-    private LocalDateTime deliveryDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -37,7 +35,7 @@ public class CommandeAchat {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fournisseur_id")
-    private Fournisseur fournisseur;
+    private Client client;
 
     @PrePersist
     protected void onCreate() {

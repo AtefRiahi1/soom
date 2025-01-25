@@ -77,14 +77,6 @@ public class CommandeAchatService {
         return commandeAchatRepo.findByEntrepriseId(entrepriseId);
     }
 
-    public CommandeAchat updateCommandeStatus(Integer commandeId) {
-        CommandeAchat commandeAchat = commandeAchatRepo.findById(commandeId)
-                .orElseThrow(() -> new IllegalArgumentException("commande introuvable avec l'ID : " + commandeId));
-
-        commandeAchat.setStatus(!commandeAchat.getStatus());
-        return commandeAchatRepo.save(commandeAchat);
-    }
-
     private void calculateTotalPrice(CommandeAchat commandeAchat) {
         commandeAchat.getProduits().forEach(product -> {
             product.setPrix_total(product.getQuantite() * product.getPrixUnitaire());

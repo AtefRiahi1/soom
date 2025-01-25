@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import tn.soom.backend.entities.*;
 import tn.soom.backend.repositories.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +55,6 @@ public class FactureAchatService {
             factureAchat.setNumFacture(updatedFactureAchat.getNumFacture());
             factureAchat.setProduits(updatedFactureAchat.getProduits());
             factureAchat.setTva(updatedFactureAchat.getTva());
-            factureAchat.setDatePaiement(updatedFactureAchat.getDatePaiement());
             calculateTotalPrice(factureAchat);
             calculatePriceHt(factureAchat);
             calculateTax(factureAchat);
@@ -78,6 +78,7 @@ public class FactureAchatService {
                 .orElseThrow(() -> new IllegalArgumentException("facture introuvable avec l'ID : " + factureId));
 
         factureAchat.setPaye(true);
+        factureAchat.setDatePaiement(LocalDateTime.now());
         return factureAchatRepo.save(factureAchat);
     }
 
