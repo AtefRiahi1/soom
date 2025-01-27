@@ -90,7 +90,7 @@ public class ReceptionAchatController {
             @PathVariable String fileName,
             @RequestParam String email) {
 
-        Path userDirectory = Paths.get(DIRECTORY, email, "Commandes Achat").toAbsolutePath().normalize();
+        Path userDirectory = Paths.get(DIRECTORY, email, "Receptions Achat").toAbsolutePath().normalize();
         Path imagePath = userDirectory.resolve(fileName);
 
         System.out.println("Resolved file path: " + imagePath.toString());

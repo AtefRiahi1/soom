@@ -19,26 +19,45 @@ public class ReceptionAchatService {
     @Autowired
     private NotificationRepo notificationRepo;
 
+    @Autowired
+    private MouvementService mouvementService;
+
     public ReceptionAchat create(ReceptionAchat receptionAchat, Integer entrepriseId, Integer fournisseurId, String empEmail) {
         Entreprise entreprise = entrepriseRepo.findById(entrepriseId)
                 .orElseThrow(() -> new IllegalArgumentException("Entreprise introuvable avec l'ID : " + entrepriseId));
-        Fournisseur fournisseur = fournisseurRepo.findById(entrepriseId)
+        Fournisseur fournisseur = fournisseurRepo.findById(fournisseurId)
                 .orElseThrow(() -> new IllegalArgumentException("Fournisseur introuvable avec l'ID : " + fournisseurId));
+
+        // Associer les entités
         receptionAchat.setFournisseur(fournisseur);
         receptionAchat.setEntreprise(entreprise);
+
+        // Calculer les totaux
         calculateTotalPrice(receptionAchat);
         calculatePriceHt(receptionAchat);
         calculateTax(receptionAchat);
         calculateNetAmount(receptionAchat);
+
+        // Créer un mouvement pour chaque produit
+        for (ReceptionAchat.ProductItem produit : receptionAchat.getProduits()) {
+            Mouvement mouvement = new Mouvement();
+            mouvement.setNomProduit(produit.getNom());
+            mouvement.setQuantite(produit.getQuantite());
+            mouvement.setType("ACHAT"); // Toujours de type "achat" pour une réception
+            mouvement.setEntreprise(entreprise);
+            mouvementService.createMovement(mouvement, entrepriseId, empEmail); // Appel à createMovement
+        }
+
+        // Créer une notification
         Notification notification = new Notification();
-        notification.setTitle("Nouvelle reception d'achat");
-        notification.setMessage("Une nouvelle reception d'achat a été créée.");
+        notification.setTitle("Nouvelle réception d'achat");
+        notification.setMessage("Une nouvelle réception d'achat a été créée.");
         notification.setCreatedBy(empEmail);
         notification.setEntreprise(entreprise);
         notification.setRead(false);
-
-        // Enregistrer la notification
         notificationRepo.save(notification);
+
+        // Enregistrer la réception d'achat
         return receptionAchatRepo.save(receptionAchat);
     }
 
