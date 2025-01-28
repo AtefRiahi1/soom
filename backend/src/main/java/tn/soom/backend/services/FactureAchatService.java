@@ -8,6 +8,7 @@ import tn.soom.backend.repositories.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FactureAchatService {
@@ -19,6 +20,8 @@ public class FactureAchatService {
     private FournisseurRepo fournisseurRepo;
     @Autowired
     private NotificationRepo notificationRepo;
+    @Autowired
+    private CommandeAchatRepo commandeAchatRepo;
 
     public FactureAchat create(FactureAchat factureAchat, Integer entrepriseId, Integer fournisseurId, String empEmail) {
         Entreprise entreprise = entrepriseRepo.findById(entrepriseId)
@@ -33,7 +36,7 @@ public class FactureAchatService {
         calculateNetAmount(factureAchat);
         Notification notification = new Notification();
         notification.setTitle("Nouvelle facture d'achat");
-        notification.setMessage("Une nouvelle facture d'achat a été créée.");
+        notification.setMessage("Une nouvelle facture d'achat a été crée.");
         notification.setCreatedBy(empEmail);
         notification.setEntreprise(entreprise);
         notification.setRead(false);
@@ -41,6 +44,53 @@ public class FactureAchatService {
         // Enregistrer la notification
         notificationRepo.save(notification);
         return factureAchatRepo.save(factureAchat);
+    }
+
+    public FactureAchat convertCommandeToFacture(Integer commandeId, String empEmail) {
+        CommandeAchat commandeAchat = commandeAchatRepo.findById(commandeId)
+                .orElseThrow(() -> new IllegalArgumentException("Commande d'achat introuvable avec l'ID : " + commandeId));
+
+        // Créer une nouvelle facture à partir de la commande
+        FactureAchat factureAchat = new FactureAchat();
+        factureAchat.setNumFacture("FCT-" + commandeAchat.getNumCommande()); // Générer un numéro de facture
+
+        // Convertir et ajouter les produits
+        List<FactureAchat.ProductItem> factureProducts = commandeAchat.getProduits().stream()
+                .map(this::convertToFactureProductItem)
+                .collect(Collectors.toList());
+        factureAchat.setProduits(factureProducts);
+
+        // Remplir d'autres champs
+        factureAchat.setPriceHt(commandeAchat.getPriceHt());
+        factureAchat.setTva(commandeAchat.getTva());
+        factureAchat.setTaxe(commandeAchat.getTaxe());
+        factureAchat.setNetApayer(commandeAchat.getNetApayer());
+        factureAchat.setEntreprise(commandeAchat.getEntreprise());
+        factureAchat.setFournisseur(commandeAchat.getFournisseur());
+        factureAchat.setPaye(false); // Par défaut, la facture n'est pas payée
+        factureAchat.setCreatedAt(LocalDateTime.now());
+        factureAchat.setUpdatedAt(LocalDateTime.now());
+        Notification notification = new Notification();
+        notification.setTitle("Nouvelle facture d'achat");
+        notification.setMessage("Une nouvelle facture d'achat a été créée.");
+        notification.setCreatedBy(empEmail);
+        notification.setEntreprise(commandeAchat.getEntreprise());
+        notification.setRead(false);
+
+        // Enregistrer la notification
+        notificationRepo.save(notification);
+
+        // Enregistrer la facture dans la base de données
+        return factureAchatRepo.save(factureAchat);
+    }
+
+    private FactureAchat.ProductItem convertToFactureProductItem(CommandeAchat.ProductItem commandeProductItem) {
+        FactureAchat.ProductItem factureProductItem = new FactureAchat.ProductItem();
+        factureProductItem.setNom(commandeProductItem.getNom());
+        factureProductItem.setQuantite(commandeProductItem.getQuantite());
+        factureProductItem.setPrixUnitaire(commandeProductItem.getPrixUnitaire());
+        factureProductItem.setPrix_total(commandeProductItem.getPrix_total());
+        return factureProductItem;
     }
 
     public FactureAchat findOne(Integer id) {

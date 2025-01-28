@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import tn.soom.backend.entities.*;
 import tn.soom.backend.repositories.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommandeService {
@@ -18,6 +20,8 @@ public class CommandeService {
     private ClientRepo clientRepo;
     @Autowired
     private NotificationRepo notificationRepo;
+    @Autowired
+    private DevisRepo devisRepo;
 
     public Commande create(Commande commande, Integer entrepriseId, Integer clientId, String empEmail) {
         Entreprise entreprise = entrepriseRepo.findById(entrepriseId)
@@ -32,7 +36,7 @@ public class CommandeService {
         calculateNetAmount(commande);
         Notification notification = new Notification();
         notification.setTitle("Nouvelle commande");
-        notification.setMessage("Une nouvellle commande a été créée.");
+        notification.setMessage("Une nouvelle commande a été créée.");
         notification.setCreatedBy(empEmail);
         notification.setEntreprise(entreprise);
         notification.setRead(false);
@@ -40,6 +44,53 @@ public class CommandeService {
         // Enregistrer la notification
         notificationRepo.save(notification);
         return commandeRepo.save(commande);
+    }
+
+    public Commande convertDevisToCommande(Integer devisId, String empEmail) {
+        Devis devis = devisRepo.findById(devisId)
+                .orElseThrow(() -> new IllegalArgumentException("Devis introuvable avec l'ID : " + devisId));
+
+        // Créer une nouvelle commande à partir du devis
+        Commande commande = new Commande();
+        commande.setNumCommande("CMD-" + devis.getNumDevis()); // Générer un numéro de commande
+
+        // Convertir et ajouter les produits
+        List<Commande.ProductItem> commandeProducts = devis.getProduits().stream()
+                .map(this::convertToCommandeProductItem)
+                .collect(Collectors.toList());
+        commande.setProduits(commandeProducts);
+
+        // Remplir d'autres champs
+        commande.setPriceHt(devis.getPriceHt());
+        commande.setTva(devis.getTva());
+        commande.setTaxe(devis.getTaxe());
+        commande.setNetApayer(devis.getNetApayer());
+        commande.setEntreprise(devis.getEntreprise());
+        commande.setClient(devis.getClient());
+        commande.setCreatedAt(LocalDateTime.now());
+        commande.setUpdatedAt(LocalDateTime.now());
+
+        Notification notification = new Notification();
+        notification.setTitle("Nouvelle commande");
+        notification.setMessage("Une nouvelle commande a été crée.");
+        notification.setCreatedBy(empEmail);
+        notification.setEntreprise(devis.getEntreprise());
+        notification.setRead(false);
+
+        // Enregistrer la notification
+        notificationRepo.save(notification);
+
+        // Enregistrer la commande dans la base de données
+        return commandeRepo.save(commande);
+    }
+
+    private Commande.ProductItem convertToCommandeProductItem(Devis.ProductItem devisProductItem) {
+        Commande.ProductItem commandeProductItem = new Commande.ProductItem();
+        commandeProductItem.setNom(devisProductItem.getNom());
+        commandeProductItem.setQuantite(devisProductItem.getQuantite());
+        commandeProductItem.setPrixUnitaire(devisProductItem.getPrixUnitaire());
+        commandeProductItem.setPrix_total(devisProductItem.getPrix_total());
+        return commandeProductItem;
     }
 
     public Commande findOne(Integer id) {

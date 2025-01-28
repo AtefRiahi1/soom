@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import tn.soom.backend.entities.*;
 import tn.soom.backend.repositories.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LivraisonService {
@@ -18,6 +20,8 @@ public class LivraisonService {
     private ClientRepo clientRepo;
     @Autowired
     private NotificationRepo notificationRepo;
+    @Autowired
+    private CommandeRepo commandeRepo;
 
     public Livraison create(Livraison livraison, Integer entrepriseId, Integer clientId, String empEmail) {
         Entreprise entreprise = entrepriseRepo.findById(entrepriseId)
@@ -32,7 +36,7 @@ public class LivraisonService {
         calculateNetAmount(livraison);
         Notification notification = new Notification();
         notification.setTitle("Nouvelle livraison");
-        notification.setMessage("Une nouvellle livraison a été créée.");
+        notification.setMessage("Une nouvelle livraison a été crée.");
         notification.setCreatedBy(empEmail);
         notification.setEntreprise(entreprise);
         notification.setRead(false);
@@ -40,6 +44,52 @@ public class LivraisonService {
         // Enregistrer la notification
         notificationRepo.save(notification);
         return livraisonRepo.save(livraison);
+    }
+
+    public Livraison convertCommandeToLivraison(Integer commandeId, String empEmail) {
+        Commande commande = commandeRepo.findById(commandeId)
+                .orElseThrow(() -> new IllegalArgumentException("Commande introuvable avec l'ID : " + commandeId));
+
+        // Créer une nouvelle livraison à partir de la commande
+        Livraison livraison = new Livraison();
+        livraison.setNumLivraison("LIV-" + commande.getNumCommande()); // Générer un numéro de livraison
+
+        // Convertir et ajouter les produits
+        List<Livraison.ProductItem> livraisonProducts = commande.getProduits().stream()
+                .map(this::convertToLivraisonProductItem)
+                .collect(Collectors.toList());
+        livraison.setProduits(livraisonProducts);
+
+        // Remplir d'autres champs
+        livraison.setPriceHt(commande.getPriceHt());
+        livraison.setTva(commande.getTva());
+        livraison.setTaxe(commande.getTaxe());
+        livraison.setNetApayer(commande.getNetApayer());
+        livraison.setEntreprise(commande.getEntreprise());
+        livraison.setClient(commande.getClient());
+        livraison.setCreatedAt(LocalDateTime.now());
+        livraison.setUpdatedAt(LocalDateTime.now());
+        Notification notification = new Notification();
+        notification.setTitle("Nouvelle livraison");
+        notification.setMessage("Une nouvelle livraison a été crée.");
+        notification.setCreatedBy(empEmail);
+        notification.setEntreprise(commande.getEntreprise());
+        notification.setRead(false);
+
+        // Enregistrer la notification
+        notificationRepo.save(notification);
+
+        // Enregistrer la livraison dans la base de données
+        return livraisonRepo.save(livraison);
+    }
+
+    private Livraison.ProductItem convertToLivraisonProductItem(Commande.ProductItem commandeProductItem) {
+        Livraison.ProductItem livraisonProductItem = new Livraison.ProductItem();
+        livraisonProductItem.setNom(commandeProductItem.getNom());
+        livraisonProductItem.setQuantite(commandeProductItem.getQuantite());
+        livraisonProductItem.setPrixUnitaire(commandeProductItem.getPrixUnitaire());
+        livraisonProductItem.setPrix_total(commandeProductItem.getPrix_total());
+        return livraisonProductItem;
     }
 
     public Livraison findOne(Integer id) {

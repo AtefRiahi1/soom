@@ -41,6 +41,15 @@ public class CommandeController {
         return ResponseEntity.ok(createdCommande);
     }
 
+    @PostMapping("/convertir/{devisId}")
+    public ResponseEntity<Commande> convertirDevisEnCommande(
+            @PathVariable Integer devisId,
+            @RequestParam String empEmail) {
+
+        Commande commande = commandeService.convertDevisToCommande(devisId, empEmail);
+        return ResponseEntity.ok(commande);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Commande> findOne(@PathVariable Integer id) {
         Commande commande = commandeService.findOne(id);

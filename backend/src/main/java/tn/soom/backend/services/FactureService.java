@@ -8,6 +8,7 @@ import tn.soom.backend.repositories.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FactureService {
@@ -19,6 +20,10 @@ public class FactureService {
     private ClientRepo clientRepo;
     @Autowired
     private NotificationRepo notificationRepo;
+    @Autowired
+    private CommandeRepo commandeRepo;
+    @Autowired
+    private LivraisonRepo livraisonRepo;
 
     public Facture create(Facture facture, Integer entrepriseId, Integer clientId, String empEmail) {
         Entreprise entreprise = entrepriseRepo.findById(entrepriseId)
@@ -32,7 +37,7 @@ public class FactureService {
         calculateTax(facture);
         calculateNetAmount(facture);
         Notification notification = new Notification();
-        notification.setTitle("Nouvelle facture d'achat");
+        notification.setTitle("Nouvelle facture");
         notification.setMessage("Une nouvelle facture a été créée.");
         notification.setCreatedBy(empEmail);
         notification.setEntreprise(entreprise);
@@ -41,6 +46,100 @@ public class FactureService {
         // Enregistrer la notification
         notificationRepo.save(notification);
         return factureRepo.save(facture);
+    }
+
+    public Facture convertCommandeToFacture(Integer commandeId, String empEmail) {
+        Commande commande = commandeRepo.findById(commandeId)
+                .orElseThrow(() -> new IllegalArgumentException("Commande introuvable avec l'ID : " + commandeId));
+
+        // Créer une nouvelle facture à partir de la commande
+        Facture facture = new Facture();
+        facture.setNumFacture("FAC-" + commande.getNumCommande()); // Générer un numéro de facture
+
+        // Convertir et ajouter les produits
+        List<Facture.ProductItem> factureProducts = commande.getProduits().stream()
+                .map(this::convertToFactureProductItem)
+                .collect(Collectors.toList());
+        facture.setProduits(factureProducts);
+
+        // Remplir d'autres champs
+        facture.setPriceHt(commande.getPriceHt());
+        facture.setTva(commande.getTva());
+        facture.setTaxe(commande.getTaxe());
+        facture.setNetApayer(commande.getNetApayer());
+        facture.setEntreprise(commande.getEntreprise());
+        facture.setClient(commande.getClient());
+        facture.setCreatedAt(LocalDateTime.now());
+        facture.setUpdatedAt(LocalDateTime.now());
+        facture.setPaye(false); // Par défaut, la facture n'est pas payée
+        Notification notification = new Notification();
+        notification.setTitle("Nouvelle facture");
+        notification.setMessage("Une nouvelle facture a été créée.");
+        notification.setCreatedBy(empEmail);
+        notification.setEntreprise(commande.getEntreprise());
+        notification.setRead(false);
+
+        // Enregistrer la notification
+        notificationRepo.save(notification);
+
+        // Enregistrer la facture dans la base de données
+        return factureRepo.save(facture);
+    }
+
+    private Facture.ProductItem convertToFactureProductItem(Commande.ProductItem commandeProductItem) {
+        Facture.ProductItem factureProductItem = new Facture.ProductItem();
+        factureProductItem.setNom(commandeProductItem.getNom());
+        factureProductItem.setQuantite(commandeProductItem.getQuantite());
+        factureProductItem.setPrixUnitaire(commandeProductItem.getPrixUnitaire());
+        factureProductItem.setPrix_total(commandeProductItem.getPrix_total());
+        return factureProductItem;
+    }
+
+    public Facture convertLivraisonToFacture(Integer livraisonId, String empEmail) {
+        Livraison livraison = livraisonRepo.findById(livraisonId)
+                .orElseThrow(() -> new IllegalArgumentException("Livraison introuvable avec l'ID : " + livraisonId));
+
+        // Créer une nouvelle facture à partir de la livraison
+        Facture facture = new Facture();
+        facture.setNumFacture("FAC-" + livraison.getNumLivraison()); // Générer un numéro de facture
+
+        // Convertir et ajouter les produits
+        List<Facture.ProductItem> factureProducts = livraison.getProduits().stream()
+                .map(this::convertToFactureProductItem)
+                .collect(Collectors.toList());
+        facture.setProduits(factureProducts);
+
+        // Remplir d'autres champs
+        facture.setPriceHt(livraison.getPriceHt());
+        facture.setTva(livraison.getTva());
+        facture.setTaxe(livraison.getTaxe());
+        facture.setNetApayer(livraison.getNetApayer());
+        facture.setEntreprise(livraison.getEntreprise());
+        facture.setClient(livraison.getClient());
+        facture.setCreatedAt(LocalDateTime.now());
+        facture.setUpdatedAt(LocalDateTime.now());
+        facture.setPaye(false); // Par défaut, la facture n'est pas payée
+        Notification notification = new Notification();
+        notification.setTitle("Nouvelle facture");
+        notification.setMessage("Une nouvelle facture a été créée.");
+        notification.setCreatedBy(empEmail);
+        notification.setEntreprise(livraison.getEntreprise());
+        notification.setRead(false);
+
+        // Enregistrer la notification
+        notificationRepo.save(notification);
+
+        // Enregistrer la facture dans la base de données
+        return factureRepo.save(facture);
+    }
+
+    private Facture.ProductItem convertToFactureProductItem(Livraison.ProductItem livraisonProductItem) {
+        Facture.ProductItem factureProductItem = new Facture.ProductItem();
+        factureProductItem.setNom(livraisonProductItem.getNom());
+        factureProductItem.setQuantite(livraisonProductItem.getQuantite());
+        factureProductItem.setPrixUnitaire(livraisonProductItem.getPrixUnitaire());
+        factureProductItem.setPrix_total(livraisonProductItem.getPrix_total());
+        return factureProductItem;
     }
 
     public Facture findOne(Integer id) {

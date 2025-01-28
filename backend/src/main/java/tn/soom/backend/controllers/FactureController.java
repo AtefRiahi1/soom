@@ -40,6 +40,25 @@ public class FactureController {
         return ResponseEntity.ok(createdFacture);
     }
 
+    @PostMapping("/convertir/livraison/{livraisonId}")
+    public ResponseEntity<Facture> convertirLivraisonEnFacture(
+            @PathVariable Integer livraisonId,
+            @RequestParam String empEmail) {
+
+        Facture facture = factureService.convertLivraisonToFacture(livraisonId, empEmail);
+        return ResponseEntity.ok(facture);
+    }
+
+    // Endpoint pour convertir une commande en facture
+    @PostMapping("/convertir/commande/{commandeId}")
+    public ResponseEntity<Facture> convertirCommandeEnFacture(
+            @PathVariable Integer commandeId,
+            @RequestParam String empEmail) {
+
+        Facture facture = factureService.convertCommandeToFacture(commandeId, empEmail);
+        return ResponseEntity.ok(facture);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Facture> findOne(@PathVariable Integer id) {
         Facture facture = factureService.findOne(id);

@@ -40,6 +40,15 @@ public class LivraisonController {
         return ResponseEntity.ok(createdLivraison);
     }
 
+    @PostMapping("/convertir/{commandeId}")
+    public ResponseEntity<Livraison> convertirCommandeEnLivraison(
+            @PathVariable Integer commandeId,
+            @RequestParam String empEmail) {
+
+        Livraison livraison = livraisonService.convertCommandeToLivraison(commandeId, empEmail);
+        return ResponseEntity.ok(livraison);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Livraison> findOne(@PathVariable Integer id) {
         Livraison livraison = livraisonService.findOne(id);

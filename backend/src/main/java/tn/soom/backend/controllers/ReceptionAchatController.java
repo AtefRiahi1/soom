@@ -38,6 +38,15 @@ public class ReceptionAchatController {
         return ResponseEntity.ok(createdReceptionAchat);
     }
 
+    @PostMapping("/convertir/{factureId}")
+    public ResponseEntity<ReceptionAchat> convertirFactureEnReception(
+            @PathVariable Integer factureId,
+            @RequestParam String empEmail) {
+
+        ReceptionAchat receptionAchat = receptionAchatService.convertFactureToReception(factureId, empEmail);
+        return ResponseEntity.ok(receptionAchat);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ReceptionAchat> findOne(@PathVariable Integer id) {
         ReceptionAchat receptionAchat = receptionAchatService.findOne(id);

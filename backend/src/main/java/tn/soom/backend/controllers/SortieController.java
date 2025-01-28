@@ -42,6 +42,15 @@ public class SortieController {
         return ResponseEntity.ok(createdSortie);
     }
 
+    @PostMapping("/convertir/{factureId}")
+    public ResponseEntity<Sortie> convertirFactureEnSortie(
+            @PathVariable Integer factureId,
+            @RequestParam String empEmail) {
+
+        Sortie sortie = sortieService.convertFactureToSortie(factureId, empEmail);
+        return ResponseEntity.ok(sortie);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Sortie> findOne(@PathVariable Integer id) {
         Sortie sortie = sortieService.findOne(id);

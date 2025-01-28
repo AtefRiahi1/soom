@@ -5,8 +5,10 @@ import org.springframework.stereotype.Service;
 import tn.soom.backend.entities.*;
 import tn.soom.backend.repositories.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReceptionAchatService {
@@ -21,6 +23,8 @@ public class ReceptionAchatService {
 
     @Autowired
     private MouvementService mouvementService;
+    @Autowired
+    private FactureAchatRepo factureAchatRepo;
 
     public ReceptionAchat create(ReceptionAchat receptionAchat, Integer entrepriseId, Integer fournisseurId, String empEmail) {
         Entreprise entreprise = entrepriseRepo.findById(entrepriseId)
@@ -59,6 +63,62 @@ public class ReceptionAchatService {
 
         // Enregistrer la réception d'achat
         return receptionAchatRepo.save(receptionAchat);
+    }
+
+    public ReceptionAchat convertFactureToReception(Integer factureId, String empEmail) {
+        FactureAchat factureAchat = factureAchatRepo.findById(factureId)
+                .orElseThrow(() -> new IllegalArgumentException("Facture d'achat introuvable avec l'ID : " + factureId));
+
+        // Créer une nouvelle réception à partir de la facture
+        ReceptionAchat receptionAchat = new ReceptionAchat();
+        receptionAchat.setNumReception("REC-" + factureAchat.getNumFacture()); // Générer un numéro de réception
+
+        // Convertir et ajouter les produits
+        List<ReceptionAchat.ProductItem> receptionProducts = factureAchat.getProduits().stream()
+                .map(this::convertToReceptionProductItem)
+                .collect(Collectors.toList());
+        receptionAchat.setProduits(receptionProducts);
+
+        // Remplir d'autres champs
+        receptionAchat.setPriceHt(factureAchat.getPriceHt());
+        receptionAchat.setTva(factureAchat.getTva());
+        receptionAchat.setTaxe(factureAchat.getTaxe());
+        receptionAchat.setNetApayer(factureAchat.getNetApayer());
+        receptionAchat.setEntreprise(factureAchat.getEntreprise());
+        receptionAchat.setFournisseur(factureAchat.getFournisseur());
+        receptionAchat.setCreatedAt(LocalDateTime.now());
+        receptionAchat.setUpdatedAt(LocalDateTime.now());
+
+        // Créer un mouvement pour chaque produit
+        for (FactureAchat.ProductItem produit : factureAchat.getProduits()) {
+            Mouvement mouvement = new Mouvement();
+            mouvement.setNomProduit(produit.getNom());
+            mouvement.setQuantite(produit.getQuantite());
+            mouvement.setType("ACHAT"); // Toujours de type "achat" pour une réception
+            mouvement.setEntreprise(factureAchat.getEntreprise());
+            mouvementService.createMovement(mouvement, factureAchat.getEntreprise().getId(), empEmail); // Appel à createMovement
+        }
+
+        // Créer une notification
+        Notification notification = new Notification();
+        notification.setTitle("Nouvelle réception d'achat");
+        notification.setMessage("Une nouvelle réception d'achat a été créée.");
+        notification.setCreatedBy(empEmail);
+        notification.setEntreprise(factureAchat.getEntreprise());
+        notification.setRead(false);
+        notificationRepo.save(notification);
+
+        // Enregistrer la réception dans la base de données
+        return receptionAchatRepo.save(receptionAchat);
+    }
+
+    private ReceptionAchat.ProductItem convertToReceptionProductItem(FactureAchat.ProductItem factureProductItem) {
+        ReceptionAchat.ProductItem receptionProductItem = new ReceptionAchat.ProductItem();
+        receptionProductItem.setNom(factureProductItem.getNom());
+        receptionProductItem.setQuantite(factureProductItem.getQuantite());
+        receptionProductItem.setPrixUnitaire(factureProductItem.getPrixUnitaire());
+        receptionProductItem.setPrix_total(factureProductItem.getPrix_total());
+        return receptionProductItem;
     }
 
     public ReceptionAchat findOne(Integer id) {
