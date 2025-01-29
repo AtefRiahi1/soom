@@ -38,7 +38,8 @@
         </div>
   
         <button type="submit" [disabled]="isSubmitting || signupForm.invalid" class="submit-button">
-          S'inscrire
+          <span *ngIf="!isSubmitting">S'inscrire</span>
+  <span *ngIf="isSubmitting">En cours...</span>
         </button>
   
         <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>

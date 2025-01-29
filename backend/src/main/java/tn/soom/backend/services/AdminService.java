@@ -39,13 +39,13 @@ public class AdminService {
 
     @Transactional
     public void createDefaultCRMIfNotExists() {
-        Module module = moduleRepo.findByNom("CRM");
+        Module module = moduleRepo.findByNom("ERP");
 
         if (module == null) {
             Module defaultModule = new Module();
-            defaultModule.setNom("CRM");
+            defaultModule.setNom("ERP");
             defaultModule.setApp(true);
-            defaultModule.setPath("/employes");
+            defaultModule.setPath("/clients");
             defaultModule.setPrix(0.0);
             defaultModule.setId(1);
 

@@ -50,14 +50,31 @@ export const MENU: MenuItem[] = [
      
     },
     {
-        id: 3,
+        id: 6,
         label: 'Gestion des sessions',
         icon: 'bx-home-circle',
         link: '/sessionemploye',
         roles: ['ENTREPRISE']
       
      
-    }
+    },
+    {
+         id: 7,
+         label: 'CRM',
+         icon: 'bx-home-circle',
+          roles: ['CRM'],
+         subItems: [
+             {
+             id:1,
+             label: 'Gestion des clients',
+             icon: 'bx-home-circle',
+             link: 'clients',
+             parentId:7,
+     
+         },
+        
+         ]
+     }
 
 ];
 

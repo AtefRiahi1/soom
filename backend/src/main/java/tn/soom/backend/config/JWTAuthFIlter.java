@@ -31,6 +31,16 @@ public class JWTAuthFIlter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final  String jwtToken;
         final String userEmail;
+        if (request.getServletPath().equals("/auth/upload")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (request.getServletPath().equals("/auth/signup")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+
         if (authHeader == null || authHeader.isBlank()) {
             filterChain.doFilter(request, response);
             return;
