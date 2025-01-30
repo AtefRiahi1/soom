@@ -3,6 +3,7 @@ package tn.soom.backend.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import tn.soom.backend.entities.Commande;
 import tn.soom.backend.entities.Fournisseur;
 import tn.soom.backend.services.FournisseurService;
 import tn.soom.backend.services.ModuleService;
@@ -23,10 +24,16 @@ public class FournisseurController {
         return ResponseEntity.ok(savedFournisseur);
     }
 
-    @GetMapping("/{entrepriseId}")
+    @GetMapping("/entreprise/{entrepriseId}")
     public ResponseEntity<List<Fournisseur>> getFournisseursByEntrepriseId(@PathVariable Integer entrepriseId) {
         List<Fournisseur> fournisseurs = fournisseurService.getFournisseurByEntrepriseId(entrepriseId);
         return ResponseEntity.ok(fournisseurs);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Fournisseur> findOne(@PathVariable Integer id) {
+        Fournisseur fournisseur = fournisseurService.findOne(id);
+        return ResponseEntity.ok(fournisseur);
     }
 
     @PutMapping("/{id}")

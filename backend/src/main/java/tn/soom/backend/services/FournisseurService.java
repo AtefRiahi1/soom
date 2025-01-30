@@ -48,6 +48,10 @@ public class FournisseurService {
         return fournisseurRepo.findByEntrepriseId(entrepriseId);
     }
 
+    public Fournisseur findOne(Integer id) {
+        return fournisseurRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Fournisseur introuvable avec l'ID : " + id));
+    }
     public Fournisseur updateFournisseur(Integer id, Fournisseur updatedFournisseur) {
         Optional<Fournisseur> existingFournisseur = fournisseurRepo.findById(id);
         if (existingFournisseur.isPresent()) {

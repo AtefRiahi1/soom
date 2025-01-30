@@ -21,7 +21,7 @@ export class ClientService {
 
   // Obtenir les clients par ID d'entreprise
   getClientsByEntrepriseId(entrepriseId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/${entrepriseId}`);
+    return this.http.get<any[]>(`${this.apiUrl}/entreprise/${entrepriseId}`);
   }
 
   // Mettre à jour un client
@@ -32,5 +32,9 @@ export class ClientService {
   // Supprimer un client
   deleteClient(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getClientById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 }

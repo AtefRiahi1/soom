@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.soom.backend.entities.Client;
+import tn.soom.backend.entities.Commande;
 import tn.soom.backend.services.ClientService;
 import tn.soom.backend.services.ModuleService;
 
@@ -23,7 +24,13 @@ public class ClientController {
         return ResponseEntity.ok(savedClient);
     }
 
-    @GetMapping("/{entrepriseId}")
+    @GetMapping("/{id}")
+    public ResponseEntity<Client> findOne(@PathVariable Integer id) {
+        Client client = clientService.findOne(id);
+        return ResponseEntity.ok(client);
+    }
+
+    @GetMapping("/entreprise/{entrepriseId}")
     public ResponseEntity<List<Client>> getClientsByEntrepriseId(@PathVariable Integer entrepriseId) {
         List<Client> clients = clientService.getClientByEntrepriseId(entrepriseId);
         return ResponseEntity.ok(clients);

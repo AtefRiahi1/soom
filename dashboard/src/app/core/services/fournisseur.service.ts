@@ -21,7 +21,7 @@ export class FournisseurService {
 
   // Obtenir les fournisseurs par ID d'entreprise
   getFournisseursByEntrepriseId(entrepriseId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/${entrepriseId}`);
+    return this.http.get<any[]>(`${this.apiUrl}/entreprise/${entrepriseId}`);
   }
 
   // Mettre à jour un fournisseur
@@ -32,5 +32,9 @@ export class FournisseurService {
   // Supprimer un fournisseur
   deleteFournisseur(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getFournisseurById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 }

@@ -2,10 +2,7 @@ package tn.soom.backend.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tn.soom.backend.entities.Client;
-import tn.soom.backend.entities.Entreprise;
-import tn.soom.backend.entities.Fournisseur;
-import tn.soom.backend.entities.Notification;
+import tn.soom.backend.entities.*;
 import tn.soom.backend.repositories.ClientRepo;
 import tn.soom.backend.repositories.EntrepriseRepo;
 import tn.soom.backend.repositories.FournisseurRepo;
@@ -42,6 +39,11 @@ public class ClientService {
         }
 
         return savedClient;
+    }
+
+    public Client findOne(Integer id) {
+        return clientRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Client introuvable avec l'ID : " + id));
     }
 
     public List<Client> getClientByEntrepriseId(Integer entrepriseId) {
