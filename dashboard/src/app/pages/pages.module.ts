@@ -44,6 +44,10 @@ import { ListModuleComponent } from './list-module/list-module.component';
 import { ListSessionEmployeComponent } from './list-session-employe/list-session-employe.component';
 import { ClientComponent } from './client/client.component';
 import { ClientMapComponent } from './client-map/client-map.component';
+import { FournisseurComponent } from './fournisseur/fournisseur.component';
+import { FournisseurMapComponent } from './fournisseur-map/fournisseur-map.component';
+import { MouvementComponent } from './mouvement/mouvement.component';
+import { ArticleComponent } from './article/article.component';
 
 
 @NgModule({
@@ -62,7 +66,11 @@ import { ClientMapComponent } from './client-map/client-map.component';
          ListModuleComponent,
          ListSessionEmployeComponent,
          ClientComponent,
-         ClientMapComponent
+         ClientMapComponent,
+         FournisseurComponent,
+         FournisseurMapComponent,
+         MouvementComponent,
+         ArticleComponent
   ],
   imports: [
     CommonModule,

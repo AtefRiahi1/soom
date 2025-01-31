@@ -1,0 +1,100 @@
+<div class="container-fluid">
+    <app-page-title title="Fournisseurs"></app-page-title>
+    <div class="d-flex flex-column col-sm-12 col-md-4">
+        <div class="search-box me-2 mb-2 d-inline-block">
+            <div class="position-relative">
+                <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchArticle" (input)="searchEmployeBy()">
+                <i class="bx bx-search-alt search-icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end mb-2">
+        <button type="button" class="btn btn-success" (click)="addModal()">+ Ajouter</button>
+    </div>
+
+    <div class="table-responsive mb-0">
+        <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
+            <thead class="table-light">
+                <tr>
+                    <th class="align-middle">Nom</th>
+                    <th class="align-middle">Quantité</th>
+                    <th class="align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let article of articles | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index">
+                    <td>{{ article.nom }}</td>
+                    <td>{{ article.quantite }}</td>
+                    <td>
+                        <div class="d-flex gap-3">
+                            <a href="javascript:void(0);" class="text-success" (click)="editModal(article)"><i class="mdi mdi-pencil font-size-18"></i></a>
+                            <a href="javascript:void(0);" class="text-danger" (click)="deleteModule(article.id)"><i class="mdi mdi-delete font-size-18"></i></a>
+                              
+                              
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-container">
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>
+
+    <!-- Modale pour Ajouter -->
+    <div bsModal #add="bs-modal" class="modal fade" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter un Article</h5>
+                    <button type="button" class="btn-close" (click)="add?.hide()"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="addForm" (ngSubmit)="onAddModule()">
+                        <div class="mb-3">
+                            <label for="nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="nom" formControlName="nom">
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantite" class="form-label">Quantité</label>
+                            <input type="number" class="form-control" id="quantite" formControlName="quantite">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="add?.hide()">Fermer</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="addForm.invalid">Ajouter</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modale pour Éditer -->
+    <div bsModal #edit="bs-modal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier un Article</h5>
+                    <button type="button" class="btn-close" (click)="edit?.hide()"></button>
+                </div>
+                <div class="modal-body">
+                    <form [formGroup]="editForm" (ngSubmit)="onUpdateArticle()">
+                        <div class="mb-3">
+                            <label for="edit-nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="edit-nom" formControlName="nom">
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantite" class="form-label">Quantité</label>
+                            <input type="number" class="form-control" id="edit-quantite" formControlName="quantite">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="edit?.hide()">Fermer</button>
+                            <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Modifier</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

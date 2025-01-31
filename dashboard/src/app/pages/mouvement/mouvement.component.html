@@ -1,0 +1,37 @@
+<div class="container-fluid">
+    <app-page-title title="Mouvements"></app-page-title>
+    <div class="d-flex flex-column col-sm-12 col-md-4">
+    
+        <div class="search-box me-2 mb-2 d-inline-block">
+          <div class="position-relative">
+            <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchEmploye" (input)="searchEmployeBy()">
+            <i class="bx bx-search-alt search-icon"></i>
+          </div>
+        </div>
+      </div>
+
+    </div>
+      <div class="table-responsive mb-0">
+        <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
+          <thead class="table-light">
+            <tr >
+              <th class="align-middle">Nom de produit</th>
+              <th class="align-middle">Quantité</th>
+              <th class="align-middle">Type</th>
+              <th class="align-middle">Date de création</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let data of mouvements | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index;" id="o_{{data.id}}">
+            <tr>
+              <td>{{data.nomProduit}}</td>
+              <td>{{data.quantite}}</td>
+              <td>{{data.type}}</td>
+              <td>{{data.createdAt | date:'yyyy-MM-dd HH:mm'}}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+      </div>
+      <div class="pagination-container">
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </div>

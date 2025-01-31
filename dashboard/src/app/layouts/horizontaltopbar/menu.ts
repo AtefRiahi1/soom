@@ -51,7 +51,49 @@ export const MENU: MenuItem[] = [
         roles: ['ENTREPRISE']
       
      
-    }
+    },
+    {
+         id: 7,
+         label: 'CRM',
+         icon: 'bx-home-circle',
+          roles: ['CRM'],
+         subItems: [
+             {
+             id:1,
+             label: 'Gestion des clients',
+             icon: 'bx-home-circle',
+             link: 'clients',
+             parentId:7,
+     
+         },
+         {
+            id:2,
+            label: 'Gestion des Fournisseurs',
+            icon: 'bx-home-circle',
+            link: 'fournisseurs',
+            parentId:7,
+    
+        },,
+        {
+           id:3,
+           label: 'Gestion des Articles',
+           icon: 'bx-home-circle',
+           link: 'articles',
+           parentId:7,
+   
+       },
+        
+         ]
+     },
+     {
+         id: 8,
+         label: 'Liste des mouvements',
+         icon: 'bx-home-circle',
+         link: '/mouvements',
+         roles: ['ENTREPRISE']
+       
+      
+     },
 
 ];
 
