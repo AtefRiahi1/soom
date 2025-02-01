@@ -34,12 +34,15 @@ public class Fournisseur {
     private Entreprise entreprise;
 
     @OneToMany(mappedBy = "fournisseur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<CommandeAchat> commandeAchats;
 
     @OneToMany(mappedBy = "fournisseur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<FactureAchat> factureAchats;
 
     @OneToMany(mappedBy = "fournisseur", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<ReceptionAchat> receptionAchats;
 
     @PrePersist

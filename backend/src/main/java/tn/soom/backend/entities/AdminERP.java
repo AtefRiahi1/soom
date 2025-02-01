@@ -1,5 +1,6 @@
 package tn.soom.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -31,9 +32,11 @@ public class AdminERP implements UserDetails {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "adminERP", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "adminERP")
+    @JsonIgnore
     private List<AdminSession> adminSessions;
 
     @Override

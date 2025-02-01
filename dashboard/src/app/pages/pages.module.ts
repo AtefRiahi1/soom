@@ -48,6 +48,9 @@ import { FournisseurComponent } from './fournisseur/fournisseur.component';
 import { FournisseurMapComponent } from './fournisseur-map/fournisseur-map.component';
 import { MouvementComponent } from './mouvement/mouvement.component';
 import { ArticleComponent } from './article/article.component';
+import { AchatComponent } from './achat/achat.component';
+import { VenteComponent } from './vente/vente.component';
+import { CommandeAchatComponent } from './commande-achat/commande-achat.component';
 
 
 @NgModule({
@@ -70,7 +73,10 @@ import { ArticleComponent } from './article/article.component';
          FournisseurComponent,
          FournisseurMapComponent,
          MouvementComponent,
-         ArticleComponent
+         ArticleComponent,
+         AchatComponent,
+         VenteComponent,
+         CommandeAchatComponent
   ],
   imports: [
     CommonModule,

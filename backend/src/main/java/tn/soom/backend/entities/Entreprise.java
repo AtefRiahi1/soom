@@ -42,49 +42,59 @@ public class Entreprise implements UserDetails {
     private List<Employe> employes;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("entreprise")
+    @JsonIgnore
     private List<Fournisseur> fournisseurs;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("entreprise")
+    @JsonIgnore
     private List<Client> clients;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("entreprise")
+    @JsonIgnore
     private List<Article> articles;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("entreprise")
+    @JsonIgnore
     private List<Mouvement> mouvements;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<CommandeAchat> commandeAchats;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<FactureAchat> factureAchats;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<ReceptionAchat> receptionAchats;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Devis> devis;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Commande> commandes;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Livraison> livraisons;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Facture> factures;
 
     @OneToMany(mappedBy = "entreprise", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Sortie> sorties;
 
     @OneToMany(mappedBy = "entreprise")
+    @JsonIgnore
     private List<EntrepriseSession> entrepriseSessions;
 
     @Override

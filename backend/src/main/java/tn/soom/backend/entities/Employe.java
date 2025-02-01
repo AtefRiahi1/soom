@@ -41,9 +41,11 @@ public class Employe implements UserDetails {
     private Entreprise entreprise;
 
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Notification> notifications;
 
     @OneToMany(mappedBy = "employe")
+    @JsonIgnore
     private List<EmployeSession> employeSessions;
 
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)

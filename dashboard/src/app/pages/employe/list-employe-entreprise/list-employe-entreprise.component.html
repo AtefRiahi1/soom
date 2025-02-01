@@ -101,7 +101,7 @@
                         <optgroup label="Modules disponibles">
                           <option *ngFor="let module of listmoduleAppTrue" [value]="module.id">{{ module.nom }}</option>
                         </optgroup>
-                        <optgroup *ngIf="showAdditionalModules" label="Modules CRM">
+                        <optgroup *ngIf="showAdditionalModules" label="Modules ERP">
                           <option *ngFor="let module of listmoduleAppFalse" [value]="module.id">{{ module.nom }}</option>
                         </optgroup>
                       </select>
@@ -167,7 +167,7 @@
                 <optgroup label="Modules disponibles">
                   <option *ngFor="let module of listmoduleAppTrue" [value]="module.id">{{ module.nom }}</option>
                 </optgroup>
-                <optgroup label="Modules CRM">
+                <optgroup label="Modules ERP">
                   <option *ngFor="let module of listmoduleAppFalse" [value]="module.id">{{ module.nom }}</option>
                 </optgroup>
               </select>

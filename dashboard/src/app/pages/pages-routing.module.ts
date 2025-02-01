@@ -15,6 +15,9 @@ import { FournisseurComponent } from './fournisseur/fournisseur.component';
 import { FournisseurMapComponent } from './fournisseur-map/fournisseur-map.component';
 import { MouvementComponent } from './mouvement/mouvement.component';
 import { ArticleComponent } from './article/article.component';
+import { AchatComponent } from './achat/achat.component';
+import { VenteComponent } from './vente/vente.component';
+import { CommandeAchatComponent } from './commande-achat/commande-achat.component';
 
 
 
@@ -40,6 +43,9 @@ const routes: Routes = [
   { path: 'fournisseurs/map/:id', component: FournisseurMapComponent },
   { path: 'mouvements', component: MouvementComponent },
   { path: 'articles', component: ArticleComponent },
+  { path: 'achat', component: AchatComponent },
+  { path: 'vente', component: VenteComponent },
+  { path: 'commandeachat', component: CommandeAchatComponent },
 
   
 

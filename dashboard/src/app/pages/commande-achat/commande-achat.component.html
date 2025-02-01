@@ -1,0 +1,167 @@
+<div class="container-fluid">
+    <app-page-title title="Commandes achats"></app-page-title>
+    
+    <div class="d-flex flex-column col-sm-12 col-md-4">
+      <div class="search-box me-2 mb-2 d-inline-block">
+        <div class="position-relative">
+          <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchArticle" (input)="searchEmployeBy()">
+          <i class="bx bx-search-alt search-icon"></i>
+        </div>
+      </div>
+    </div>
+    
+    <div class="d-flex justify-content-end mb-2">
+      <button type="button" class="btn btn-success" (click)="addModal()">+ Ajouter</button>
+    </div>
+  
+    <div class="table-responsive mb-0">
+      <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
+        <thead class="table-light">
+          <tr>
+            <th>Numéro de Commande</th>
+            <th>Fournisseur</th>
+            <th>Prix HT</th>
+            <th>TVA</th>
+            <th>Net à Payer</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let commande of commandes | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index">
+            <td>{{ commande.numCommande }}</td>
+            <td>{{ commande.fournisseur?.nom }}</td>
+            <td>{{ commande.priceHt }}</td>
+            <td>{{ commande.tva }}</td>
+            <td>{{ commande.netApayer }}</td>
+            <td>
+              <div class="d-flex gap-3">
+                <a href="javascript:void(0);" class="text-success" (click)="editModal(commande)">
+                  <i class="mdi mdi-pencil font-size-18"></i>
+                </a>
+                <a href="javascript:void(0);" class="text-danger" (click)="deleteModule(commande.id)">
+                  <i class="mdi mdi-delete font-size-18"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <div class="pagination-container">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+    </div>
+  
+    <!-- Add Command Modal -->
+<div bsModal #add="bs-modal" class="modal fade" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Ajouter une Commande d'Achat</h5>
+          <button type="button" class="btn-close" (click)="add?.hide()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="addForm" (ngSubmit)="onAddCommande()">
+            <div class="mb-3">
+              <label for="numCommande" class="form-label">Numéro de Commande</label>
+              <input formControlName="numCommande" class="form-control" id="numCommande" />
+            </div>
+            <div class="mb-3">
+              <label for="idFournisseur" class="form-label">Fournisseur</label>
+              <select formControlName="idFournisseur" class="form-select" id="idFournisseur">
+                <option value="" disabled selected>Sélectionnez un fournisseur</option>
+                <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
+                  {{ fournisseur.nom }}
+                </option>
+              </select>
+            </div>
+            <div formArrayName="produits" class="mt-3">
+              <div *ngFor="let produit of addForm.get('produits')['controls']; let i = index">
+                <div [formGroupName]="i" class="mb-3">
+                  <h5>Produit {{ i + 1 }}</h5>
+                  <label>Nom</label>
+                  <input formControlName="nom" class="form-control" />
+                  <label>Quantité</label>
+                  <input type="number" formControlName="quantite" class="form-control" />
+                  <label>Prix Unitaire</label>
+                  <input type="number" formControlName="prixUnitaire" class="form-control" />
+                  <button type="button" class="moin-btn" (click)="removeProduct(i)">-</button>
+                </div>
+              </div>
+              <button type="button" class="plus-btn" (click)="addProduct()">+</button>
+            </div>
+            <div class="mb-3">
+              <label for="tva" class="form-label">TVA (%)</label>
+              <input formControlName="tva" type="number" class="form-control" id="tva" />
+            </div>
+            <div class="mb-3">
+              <label for="deliveryDate" class="form-label">Date de Livraison</label>
+              <input formControlName="deliveryDate" type="date" class="form-control" id="deliveryDate" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="add?.hide()">Annuler</button>
+                <button type="submit" class="btn btn-primary" [disabled]="addForm.invalid">Ajouter</button>
+              </div>
+          </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Edit Command Modal -->
+  <div bsModal #edit="bs-modal" class="modal fade" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Modifier une Commande d'Achat</h5>
+          <button type="button" class="btn-close" (click)="edit?.hide()"></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="editForm" (ngSubmit)="onUpdateCommande()">
+            <div class="mb-3">
+              <label for="numCommande" class="form-label">Numéro de Commande</label>
+              <input formControlName="numCommande" class="form-control" id="numCommande" />
+            </div>
+            <div class="mb-3">
+              <label for="idFournisseur" class="form-label">Fournisseur</label>
+              <select formControlName="idFournisseur" class="form-select" id="idFournisseur">
+                <option value="" disabled selected>Sélectionnez un fournisseur</option>
+                <option *ngFor="let fournisseur of fournisseurs" [value]="fournisseur.id">
+                  {{ fournisseur.nom }}
+                </option>
+              </select>
+            </div>
+            <div formArrayName="produits" class="mt-3">
+              <div *ngFor="let produit of editForm.get('produits')['controls']; let i = index">
+                <div [formGroupName]="i" class="mb-3">
+                  <h5>Produit {{ i + 1 }}</h5>
+                  <label>Nom</label>
+                  <input formControlName="nom" class="form-control" />
+                  <label>Quantité</label>
+                  <input type="number" formControlName="quantite" class="form-control" />
+                  <label>Prix Unitaire</label>
+                  <input type="number" formControlName="prixUnitaire" class="form-control" />
+                  <button type="button" class="moin-btn" (click)="removeProduct(i)">-</button>
+                </div>
+              </div>
+              <button type="button" class="plus-btn" (click)="addProduct()">+</button>
+            </div>
+            <div class="mb-3">
+              <label for="tva" class="form-label">TVA (%)</label>
+              <input formControlName="tva" type="number" class="form-control" id="tva" />
+            </div>
+            <div class="mb-3">
+              <label for="deliveryDate" class="form-label">Date de Livraison</label>
+              <input formControlName="deliveryDate" type="date" class="form-control" id="deliveryDate" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="edit?.hide()">Annuler</button>
+                <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Modifier</button>
+              </div>
+          </form>
+        </div>
+        
+      </div>
+    </div>
+  </div>

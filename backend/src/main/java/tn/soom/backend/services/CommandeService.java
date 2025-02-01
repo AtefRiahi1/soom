@@ -26,7 +26,7 @@ public class CommandeService {
     public Commande create(Commande commande, Integer entrepriseId, Integer clientId, String empEmail) {
         Entreprise entreprise = entrepriseRepo.findById(entrepriseId)
                 .orElseThrow(() -> new IllegalArgumentException("Entreprise introuvable avec l'ID : " + entrepriseId));
-        Client client = clientRepo.findById(entrepriseId)
+        Client client = clientRepo.findById(clientId)
                 .orElseThrow(() -> new IllegalArgumentException("Client introuvable avec l'ID : " + clientId));
         commande.setClient(client);
         commande.setEntreprise(entreprise);

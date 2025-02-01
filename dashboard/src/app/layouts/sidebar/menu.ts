@@ -88,6 +88,22 @@ export const MENU: MenuItem[] = [
            parentId:7,
    
        },
+        {
+           id:4,
+           label: 'Gestion des Achats',
+           icon: 'bx-home-circle',
+           link: 'achat',
+           parentId:7,
+   
+       },
+       {
+          id:5,
+          label: 'Gestion des Ventes',
+          icon: 'bx-home-circle',
+          link: 'vente',
+          parentId:7,
+  
+      },
         
          ]
      },

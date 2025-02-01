@@ -26,7 +26,7 @@ public class FactureAchatService {
     public FactureAchat create(FactureAchat factureAchat, Integer entrepriseId, Integer fournisseurId, String empEmail) {
         Entreprise entreprise = entrepriseRepo.findById(entrepriseId)
                 .orElseThrow(() -> new IllegalArgumentException("Entreprise introuvable avec l'ID : " + entrepriseId));
-        Fournisseur fournisseur = fournisseurRepo.findById(entrepriseId)
+        Fournisseur fournisseur = fournisseurRepo.findById(fournisseurId)
                 .orElseThrow(() -> new IllegalArgumentException("Fournisseur introuvable avec l'ID : " + fournisseurId));
         factureAchat.setFournisseur(fournisseur);
         factureAchat.setEntreprise(entreprise);
