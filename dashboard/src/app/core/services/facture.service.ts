@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -55,21 +55,26 @@ export class FactureService {
     return this.http.get<any[]>(`${this.apiUrl}/entreprise/${entrepriseId}`);
   }
 
-  // Télécharger un fichier
-  uploadFile(file: File): Observable<string> {
-    const formData = new FormData();
-    formData.append('file', file);
-
-    return this.http.post<string>(`${this.apiUrl}/upload`, formData);
-  }
-
-  // Télécharger un fichier par nom
-  downloadFile(fileName: string, email: string): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/download/${fileName}`, {
-      responseType: 'blob',
-      params: { email }
-    });
-  }
+  uploadFile(file: File,name:string):Observable<HttpEvent<string>> {
+  
+      const formData = new FormData();
+      formData.append('file', file,name);
+  
+      return this.http.post<string>(`${this.apiUrl}/upload`, formData,{
+        reportProgress:true,
+        observe:'events'
+      });
+    }
+  
+    // Télécharger un fichier par nom
+    downloadFile(fileName: string, email: string):Observable<HttpEvent<Blob>> {
+      return this.http.get(`${this.apiUrl}/download/${fileName}`, {
+        responseType: 'blob',
+        reportProgress:true,
+        observe:'events',
+        params: { email }
+      });
+    }
 
   // Mettre à jour le statut d'une facture comme payée
   updateFacturePaye(factureId: number): Observable<any> {

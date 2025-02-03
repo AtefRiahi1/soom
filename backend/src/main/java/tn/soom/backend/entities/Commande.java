@@ -26,6 +26,7 @@ public class Commande {
     private Double tva;
     private Double taxe;
     private Double netApayer;
+    private String nomFichier;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

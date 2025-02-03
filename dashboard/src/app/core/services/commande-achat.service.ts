@@ -42,10 +42,10 @@ export class CommandeAchatService {
   }
 
   // Télécharger un fichier
-  uploadFile(file: File):Observable<HttpEvent<string>> {
+  uploadFile(file: File,name:string):Observable<HttpEvent<string>> {
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file,name);
 
     return this.http.post<string>(`${this.apiUrl}/upload`, formData,{
       reportProgress:true,

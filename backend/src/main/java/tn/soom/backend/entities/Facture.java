@@ -28,6 +28,7 @@ public class Facture {
     private Double netApayer;
     private Boolean paye;
     private LocalDateTime datePaiement;
+    private String nomFichier;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

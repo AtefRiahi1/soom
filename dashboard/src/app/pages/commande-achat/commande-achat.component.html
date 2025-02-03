@@ -18,12 +18,13 @@
       <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
         <thead class="table-light">
           <tr>
-            <th>Numéro de Commande</th>
-            <th>Fournisseur</th>
-            <th>Prix HT</th>
-            <th>TVA</th>
-            <th>Net à Payer</th>
-            <th>Actions</th>
+            <th class="align-middle">Numéro de Commande</th>
+            <th class="align-middle">Fournisseur</th>
+            <th class="align-middle">Prix HT</th>
+            <th class="align-middle">TVA</th>
+            <th class="align-middle">Net à Payer</th>
+            <th class="align-middle">Télécharger</th>
+            <th class="align-middle">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -33,6 +34,9 @@
             <td>{{ commande.priceHt }}</td>
             <td>{{ commande.tva }}</td>
             <td>{{ commande.netApayer }}</td>
+            <td>
+              <a (click)="onDownloadFile(commande.nomFichier,commande.numCommande)" class="list-group-item" style="cursor: pointer;"><i class="bx bx-download"></i></a>
+            </td>
             <td>
               <div class="d-flex gap-3">
                 <a href="javascript:void(0);" class="text-success" (click)="editModal(commande)">
@@ -142,10 +146,10 @@
                   <input type="number" formControlName="quantite" class="form-control" />
                   <label>Prix Unitaire</label>
                   <input type="number" formControlName="prixUnitaire" class="form-control" />
-                  <button type="button" class="moin-btn" (click)="removeProduct(i)">-</button>
+                  <button type="button" class="moin-btn" (click)="removeProductEdit(i)">-</button>
                 </div>
               </div>
-              <button type="button" class="plus-btn" (click)="addProduct()">+</button>
+              <button type="button" class="plus-btn" (click)="addProductEdit()">+</button>
             </div>
             <div class="mb-3">
               <label for="tva" class="form-label">TVA (%)</label>

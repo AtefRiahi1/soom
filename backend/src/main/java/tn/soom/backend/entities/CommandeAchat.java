@@ -28,6 +28,7 @@ public class CommandeAchat {
     private Double taxe;
     private Double netApayer;
     private LocalDateTime deliveryDate;
+    private String nomFichier;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
