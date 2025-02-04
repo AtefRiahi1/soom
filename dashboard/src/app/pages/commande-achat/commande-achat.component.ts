@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
 import  pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { FactureAchatService } from 'src/app/core/services/facture-achat.service';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -34,6 +35,8 @@ export class CommandeAchatComponent {
   private errorMessage: string = '';
   fileStatus={ status:'',requestType:'',percent:0 };
   attachementName:string;
+  crmPermissions: any;
+  isDropdownOpen: boolean = false;
 
   @ViewChild('add', { static: false }) add?: ModalDirective;
   @ViewChild('edit', { static: false }) edit?: ModalDirective;
@@ -44,7 +47,8 @@ export class CommandeAchatComponent {
     private entrepriseService: EntrepriseService,
     private employeService: EmployeService,
     private adminService: AdminSessionService,
-    private fournisseurService: FournisseurService
+    private fournisseurService: FournisseurService,
+    private factureService:FactureAchatService
   ) {
     this.addForm = this.fb.group({
       numCommande: ['', Validators.required],
@@ -86,6 +90,7 @@ export class CommandeAchatComponent {
     } else {
         this.errorMessage = 'Informations utilisateur introuvables dans le stockage local.';
     }
+
   }
 
   private fetchAdminProfile(email: string): void {
@@ -118,6 +123,13 @@ export class CommandeAchatComponent {
         this.user = data;
         this.getAllCommande(data.entreprise.id);
         this.getAllfournisseur(data.entreprise.id);
+        this.crmPermissions = this.getCRMPermissions(data);
+  if (this.crmPermissions) {
+    console.log('CRM Permissions:', this.crmPermissions);
+    // You can use these permissions to control UI elements or functionality
+  } else {
+    console.log('No CRM module found for this user.');
+  }
       },
       (error) => {
         console.error('Error fetching worker data', error);
@@ -470,6 +482,208 @@ export class CommandeAchatComponent {
         }
       }
     };
+}
+
+getCRMPermissions(user:any) {
+  const crmModule = user.modules.find(module => module.module.nom === 'CRM');
+  if (crmModule) {
+    return {
+      consulter: crmModule.consulter,
+      modifier: crmModule.modifier,
+      ajouter: crmModule.ajouter,
+      supprimer: crmModule.supprimer
+    };
+  }
+  return null; // or return default permissions if needed
+}
+
+convertToFacture(commande: any): void {
+  // Logic to convert the commande to a Facture Achat
+  console.log('Converting to Facture Achat for commande:', commande);
+  
+  // You may want to navigate to a different page or show a confirmation dialog
+  // Example: Navigating to a new route or opening a modal
+  this.factureService.convertirCommandeEnFacture(commande.id,this.user.email).subscribe({
+      next: (response) => {
+          this.savefacture(response);
+          Swal.fire('Succès!', 'Commande convertie en facture.', 'success');
+          this.getAllCommande(this.user.entreprise.id); // Refresh the list if needed
+      },
+      error: (error) => {
+          console.error('Error converting to Facture Achat', error);
+          Swal.fire('Erreur!', 'Une erreur est survenue lors de la conversion.', 'error');
+      }
+  });
+}
+
+toggleDropdown() {
+  this.isDropdownOpen = !this.isDropdownOpen;
+}
+
+savefacture(facture:any): void {
+  // Récupérer les valeurs du formulaire
+  const factureNumber = facture.numFacture; // Use numCommande from the form
+  const supplierId = facture.fournisseur.id; // Get the supplier ID
+  const vat = facture.tva; // VAT from the form
+  const products = facture.produits; // Product array from the form
+
+  // Retrieve supplier details
+  this.fournisseurService.getFournisseurById(supplierId).subscribe(supplier => {
+    // Create the PDF
+    const pdfContent = this.generatePdfContentfacture(factureNumber, supplier, vat, products);
+    const pdfDoc = pdfMake.createPdf(pdfContent);
+    
+    pdfDoc.getBlob((blob: File) => {
+      this.attachementName = `${factureNumber}.pdf`;
+
+      this.factureService.uploadFile(blob, this.attachementName).subscribe(
+        (event: any) => {
+          // Handle upload success or progress here
+          console.log('File uploaded successfully', event);
+        },
+        (error) => {
+          if (error.status === 400) {
+            const errorMessage = error.error;
+            console.log(errorMessage);
+            alert(errorMessage);
+          }
+        }
+      );
+    });
+  });
+}
+generatePdfContentfacture(orderNumber: string, supplier: any, vat: number, products: any[]) {
+  const prixHorsTaxe = products.reduce((acc, product) => acc + product.quantite * product.prixUnitaire, 0);
+  const taxe = (prixHorsTaxe * vat) / 100;
+  const prixPayer = prixHorsTaxe + taxe;
+
+  return {
+    content: [
+      {
+        text: 'Facture d\'Achat',
+        fontSize: 28,
+        bold: true,
+        alignment: 'center',
+        decoration: 'underline',
+        color: 'skyblue',
+        margin: [0, 20, 0, 20]
+      },
+      {
+        text: 'Informations de la Facture',
+        style: 'sectionHeader',
+        margin: [0, 10, 0, 10]
+      },
+      {
+        columns: [
+          [
+            { text: `Numéro de Facture : ${orderNumber}`, bold: true },
+            { text: `Fournisseur : ${supplier.nom}`, bold: true },
+            { text: `Email : ${supplier.email}` },
+            { text: `Téléphone : ${supplier.tel}` },
+            { text: `Adresse : ${supplier.adresse}` }
+          ],
+          [
+            {
+              text: `Date : ${new Date().toLocaleString()}`,
+              alignment: 'right',
+              italics: true
+            }
+          ]
+        ],
+        columnGap: 20
+      },
+      {
+        text: 'Détails de l\'Entreprise Acheteuse',
+        style: 'sectionHeader',
+        margin: [0, 20, 0, 10]
+      },
+      {
+        columns: [
+          [
+            { text: `Nom de l'Entreprise : ${this.user.entreprise.name}`, bold: true },
+            { text: `Email : ${this.user.entreprise.email}` },
+            { text: `Téléphone : ${this.user.entreprise.tel}` },
+            { text: `Adresse : ${this.user.entreprise.address}` }
+          ]
+        ],
+        columnGap: 20
+      },
+      {
+        text: 'Détails des Produits',
+        style: 'sectionHeader',
+        margin: [0, 20, 0, 10]
+      },
+      {
+        table: {
+          headerRows: 1,
+          widths: ['*', 'auto', 'auto'],
+          body: [
+            [
+              { text: 'Nom de produit', style: 'tableHeader' },
+              { text: 'Quantité', style: 'tableHeader' },
+              { text: 'Prix (Dt)', style: 'tableHeader' }
+            ],
+            ...products.map(product => [
+              product.nom,
+              product.quantite,
+              product.prixUnitaire.toFixed(2)
+            ]),
+            ['', '', { text: `Prix hors taxe : ${prixHorsTaxe.toFixed(2)} Dt`, style: 'tableTotal' }],
+            ['', '', { text: `TVA : ${vat}%`, style: 'tableTotal' }],
+            [{ text: 'Total à payer', colSpan: 2 }, {}, { text: `${prixPayer.toFixed(2)} Dt`, style: 'tableTotalValue' }]
+          ]
+        },
+        layout: {
+          hLineWidth: (i: number) => (i === 0 ? 1 : 0.5),
+          vLineWidth: () => 0.5,
+          hLineColor: () => '#000',
+          fillColor: (rowIndex: number) => (rowIndex % 2 === 0 ? '#f5f5f5' : null),
+          paddingLeft: () => 10,
+          paddingRight: () => 10,
+          paddingTop: () => 5,
+          paddingBottom: () => 5
+        }
+      },
+      {
+        text: 'Remarques',
+        style: 'sectionHeader',
+        margin: [0, 20, 0, 10]
+      },
+      {
+        text: 'Merci pour votre confiance ! Si vous avez des questions, n’hésitez pas à nous contacter.',
+        italics: true,
+        margin: [0, 0, 0, 20],
+        alignment: 'center'
+      }
+    ],
+    styles: {
+      sectionHeader: {
+        bold: true,
+        fontSize: 16,
+        margin: [0, 15, 0, 15]
+      },
+      tableHeader: {
+        bold: true,
+        fontSize: 12,
+        color: '#ffffff',
+        fillColor: '#00305d',
+        margin: [0, 5, 0, 5]
+      },
+      tableTotal: {
+        fontSize: 10,
+        bold: true,
+        alignment: 'right',
+        margin: [0, 10, 0, 10],
+      },
+      tableTotalValue: {
+        fontSize: 10,
+        bold: true,
+        alignment: 'right',
+        margin: [0, 10, 0, 10],
+        color: '#00305d',
+      }
+    }
+  };
 }
 
 

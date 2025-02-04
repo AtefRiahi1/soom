@@ -64,6 +64,7 @@ public class FactureService {
 
         // Remplir d'autres champs
         facture.setPriceHt(commande.getPriceHt());
+        facture.setNomFichier("FAC-" + commande.getNumCommande() + ".pdf");
         facture.setTva(commande.getTva());
         facture.setTaxe(commande.getTaxe());
         facture.setNetApayer(commande.getNetApayer());
@@ -111,6 +112,7 @@ public class FactureService {
 
         // Remplir d'autres champs
         facture.setPriceHt(livraison.getPriceHt());
+        facture.setNomFichier("FAC-" + livraison.getNumLivraison() + ".pdf");
         facture.setTva(livraison.getTva());
         facture.setTaxe(livraison.getTaxe());
         facture.setNetApayer(livraison.getNetApayer());

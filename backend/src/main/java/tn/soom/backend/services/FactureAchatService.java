@@ -67,6 +67,7 @@ public class FactureAchatService {
         factureAchat.setNetApayer(commandeAchat.getNetApayer());
         factureAchat.setEntreprise(commandeAchat.getEntreprise());
         factureAchat.setFournisseur(commandeAchat.getFournisseur());
+        factureAchat.setNomFichier("FCT-" + commandeAchat.getNumCommande() + ".pdf");
         factureAchat.setPaye(false); // Par défaut, la facture n'est pas payée
         factureAchat.setCreatedAt(LocalDateTime.now());
         factureAchat.setUpdatedAt(LocalDateTime.now());

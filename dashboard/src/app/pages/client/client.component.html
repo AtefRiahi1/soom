@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="d-flex justify-content-end mb-2">
-        <button type="button" class="btn btn-success" (click)="addModal()">+ Ajouter</button>
+        <button *ngIf="crmPermissions?.ajouter" type="button" class="btn btn-success" (click)="addModal()">+ Ajouter</button>
     </div>
 
     <div class="table-responsive mb-0">
@@ -33,8 +33,8 @@
                     <td>{{ client.tel }}</td>
                     <td>
                         <div class="d-flex gap-3">
-                            <a href="javascript:void(0);" class="text-success" (click)="editModal(client)"><i class="mdi mdi-pencil font-size-18"></i></a>
-                            <a href="javascript:void(0);" class="text-danger" (click)="deleteModule(client.id)"><i class="mdi mdi-delete font-size-18"></i></a>
+                            <a *ngIf="crmPermissions?.modifier" href="javascript:void(0);" class="text-success" (click)="editModal(client)"><i class="mdi mdi-pencil font-size-18"></i></a>
+                            <a *ngIf="crmPermissions?.supprimer" href="javascript:void(0);" class="text-danger" (click)="deleteModule(client.id)"><i class="mdi mdi-delete font-size-18"></i></a>
                             <button class="btn btn-primary" [routerLink]="['map',client.id]">
                                 <i class="mdi mdi-map-marker-outline "></i>
                             </button>

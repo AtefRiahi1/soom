@@ -24,6 +24,7 @@ export class FournisseurComponent {
       user: any;
       userType: string | null = '';
       private errorMessage: string = '';
+      crmPermissions: any;
     
       @ViewChild('add', { static: false }) add?: ModalDirective;
       @ViewChild('edit', { static: false }) edit?: ModalDirective;
@@ -100,6 +101,13 @@ export class FournisseurComponent {
           (data) => {
             this.user = data;
             this.getAllFournisseur(data.entreprise.id);
+            this.crmPermissions = this.getCRMPermissions(data);
+  if (this.crmPermissions) {
+    console.log('CRM Permissions:', this.crmPermissions);
+    // You can use these permissions to control UI elements or functionality
+  } else {
+    console.log('No CRM module found for this user.');
+  }
           },
           (error) => {
             console.error('Error fetching worker data', error);
@@ -112,6 +120,19 @@ export class FournisseurComponent {
         this.fournisseurService.getFournisseursByEntrepriseId(idEnt).subscribe(fournisseurs => {
           this.fournisseurs = fournisseurs;
         });
+      }
+
+      getCRMPermissions(user:any) {
+        const crmModule = user.modules.find(module => module.module.nom === 'CRM');
+        if (crmModule) {
+          return {
+            consulter: crmModule.consulter,
+            modifier: crmModule.modifier,
+            ajouter: crmModule.ajouter,
+            supprimer: crmModule.supprimer
+          };
+        }
+        return null; // or return default permissions if needed
       }
     
       addModal(): void {

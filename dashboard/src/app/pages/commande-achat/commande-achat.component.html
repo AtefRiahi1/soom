@@ -1,61 +1,79 @@
 <div class="container-fluid">
-    <app-page-title title="Commandes achats"></app-page-title>
-    
-    <div class="d-flex flex-column col-sm-12 col-md-4">
+  <app-page-title title="Commandes achats"></app-page-title>
+  
+  <div class="d-flex flex-column col-sm-12 col-md-4">
       <div class="search-box me-2 mb-2 d-inline-block">
-        <div class="position-relative">
-          <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchArticle" (input)="searchEmployeBy()">
-          <i class="bx bx-search-alt search-icon"></i>
-        </div>
+          <div class="position-relative">
+              <input type="text" class="form-control" autocomplete="off" id="searchTableList" placeholder="Rechercher..." [(ngModel)]="searchArticle" (input)="searchEmployeBy()">
+              <i class="bx bx-search-alt search-icon"></i>
+          </div>
       </div>
-    </div>
-    
-    <div class="d-flex justify-content-end mb-2">
-      <button type="button" class="btn btn-success" (click)="addModal()">+ Ajouter</button>
-    </div>
+  </div>
   
-    <div class="table-responsive mb-0">
+  <div class="d-flex justify-content-end mb-2">
+      <button *ngIf="crmPermissions?.ajouter" type="button" class="btn btn-success" (click)="addModal()">+ Ajouter</button>
+  </div>
+
+  <div class="table-responsive mb-0">
       <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
-        <thead class="table-light">
-          <tr>
-            <th class="align-middle">Numéro de Commande</th>
-            <th class="align-middle">Fournisseur</th>
-            <th class="align-middle">Prix HT</th>
-            <th class="align-middle">TVA</th>
-            <th class="align-middle">Net à Payer</th>
-            <th class="align-middle">Télécharger</th>
-            <th class="align-middle">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let commande of commandes | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index">
-            <td>{{ commande.numCommande }}</td>
-            <td>{{ commande.fournisseur?.nom }}</td>
-            <td>{{ commande.priceHt }}</td>
-            <td>{{ commande.tva }}</td>
-            <td>{{ commande.netApayer }}</td>
-            <td>
-              <a (click)="onDownloadFile(commande.nomFichier,commande.numCommande)" class="list-group-item" style="cursor: pointer;"><i class="bx bx-download"></i></a>
-            </td>
-            <td>
-              <div class="d-flex gap-3">
-                <a href="javascript:void(0);" class="text-success" (click)="editModal(commande)">
-                  <i class="mdi mdi-pencil font-size-18"></i>
-                </a>
-                <a href="javascript:void(0);" class="text-danger" (click)="deleteModule(commande.id)">
-                  <i class="mdi mdi-delete font-size-18"></i>
-                </a>
-              </div>
-            </td>
-          </tr>
-        </tbody>
+          <thead class="table-light">
+              <tr>
+                  <th class="align-middle">Numéro de Commande</th>
+                  <th class="align-middle">Fournisseur</th>
+                  <th class="align-middle">Prix HT</th>
+                  <th class="align-middle">TVA</th>
+                  <th class="align-middle">Net à Payer</th>
+                  <th class="align-middle">Aperçu</th>
+                  <th class="align-middle">Télécharger</th>
+                  <th class="align-middle">Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr *ngFor="let commande of commandes | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index">
+                  <td>{{ commande.numCommande }}</td>
+                  <td>{{ commande.fournisseur?.nom }}</td>
+                  <td>{{ commande.priceHt }}</td>
+                  <td>{{ commande.tva }}</td>
+                  <td>{{ commande.netApayer }}</td>
+                  <td>
+                      <a [routerLink]="[commande.nomFichier,commande.id]" class="list-group-item" style="cursor: pointer;">
+                          <i class="dripicons-preview"></i>
+                      </a>
+                  </td>
+                  <td>
+                      <a (click)="onDownloadFile(commande.nomFichier,commande.numCommande)" class="list-group-item" style="cursor: pointer;">
+                          <i class="bx bx-download"></i>
+                      </a>
+                  </td>
+                  <td>
+                      <div class="d-flex gap-3">
+                          <a *ngIf="crmPermissions?.modifier" href="javascript:void(0);" class="text-success" (click)="editModal(commande)">
+                              <i class="mdi mdi-pencil font-size-18"></i>
+                          </a>
+                          <a *ngIf="crmPermissions?.supprimer" href="javascript:void(0);" class="text-danger" (click)="deleteModule(commande.id)">
+                              <i class="mdi mdi-delete font-size-18"></i>
+                          </a>
+                          <td>
+                            <div class="dropdown" (click)="toggleDropdown()">
+                                <button *ngIf="crmPermissions?.ajouter" class="btn btn-secondary" type="button">
+                                    ...
+                                </button>
+                                <ul class="dropdown-menu" [ngClass]="{'show': isDropdownOpen}">
+                                    <li><a class="dropdown-item" (click)="convertToFacture(commande)">Facture Achat</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                      </div>
+                  </td>
+              </tr>
+          </tbody>
       </table>
-    </div>
-    
-    <div class="pagination-container">
-      <pagination-controls (pageChange)="p = $event"></pagination-controls>
-    </div>
+  </div>
   
+  <div class="pagination-container">
+      <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  </div>
+</div>
     <!-- Add Command Modal -->
 <div bsModal #add="bs-modal" class="modal fade" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
     <div class="modal-dialog">

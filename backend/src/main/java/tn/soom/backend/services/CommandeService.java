@@ -64,6 +64,7 @@ public class CommandeService {
         commande.setPriceHt(devis.getPriceHt());
         commande.setTva(devis.getTva());
         commande.setTaxe(devis.getTaxe());
+        commande.setNomFichier("CMD-" + devis.getNumDevis() + ".pdf");
         commande.setNetApayer(devis.getNetApayer());
         commande.setEntreprise(devis.getEntreprise());
         commande.setClient(devis.getClient());

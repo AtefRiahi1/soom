@@ -88,6 +88,7 @@ public class SortieService {
 
         // Remplir d'autres champs
         sortie.setPriceHt(facture.getPriceHt());
+        sortie.setNomFichier("SORT-" + facture.getNumFacture() + ".pdf");
         sortie.setTva(facture.getTva());
         sortie.setTaxe(facture.getTaxe());
         sortie.setNetApayer(facture.getNetApayer());

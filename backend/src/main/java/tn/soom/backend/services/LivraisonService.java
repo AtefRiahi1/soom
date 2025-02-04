@@ -62,6 +62,7 @@ public class LivraisonService {
 
         // Remplir d'autres champs
         livraison.setPriceHt(commande.getPriceHt());
+        livraison.setNomFichier("LIV-" + commande.getNumCommande() + ".pdf");
         livraison.setTva(commande.getTva());
         livraison.setTaxe(commande.getTaxe());
         livraison.setNetApayer(commande.getNetApayer());

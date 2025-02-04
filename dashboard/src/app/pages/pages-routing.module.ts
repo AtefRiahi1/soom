@@ -18,6 +18,7 @@ import { ArticleComponent } from './article/article.component';
 import { AchatComponent } from './achat/achat.component';
 import { VenteComponent } from './vente/vente.component';
 import { CommandeAchatComponent } from './commande-achat/commande-achat.component';
+import { ComachatfileComponent } from './comachatfile/comachatfile.component';
 
 
 
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'achat', component: AchatComponent },
   { path: 'vente', component: VenteComponent },
   { path: 'commandeachat', component: CommandeAchatComponent },
+  { path: 'commandeachat/:filename/:ido', component: ComachatfileComponent },
 
   
 

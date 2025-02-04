@@ -51,6 +51,7 @@ import { ArticleComponent } from './article/article.component';
 import { AchatComponent } from './achat/achat.component';
 import { VenteComponent } from './vente/vente.component';
 import { CommandeAchatComponent } from './commande-achat/commande-achat.component';
+import { ComachatfileComponent } from './comachatfile/comachatfile.component';
 
 
 @NgModule({
@@ -76,7 +77,8 @@ import { CommandeAchatComponent } from './commande-achat/commande-achat.componen
          ArticleComponent,
          AchatComponent,
          VenteComponent,
-         CommandeAchatComponent
+         CommandeAchatComponent,
+         ComachatfileComponent
   ],
   imports: [
     CommonModule,

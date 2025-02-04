@@ -17,3 +17,14 @@
     padding: 10px; 
     margin-top: 10px; 
 }
+.dropdown-menu.show {
+    display: block;
+}
+.table-responsive {
+    overflow: visible; /* Prevents scrolling */
+}
+
+.dropdown-menu {
+    position: absolute; /* Ensures dropdown is positioned correctly */
+    z-index: 1000; /* Keeps dropdown above other elements */
+}

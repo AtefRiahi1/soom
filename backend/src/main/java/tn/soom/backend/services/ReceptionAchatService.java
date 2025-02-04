@@ -81,6 +81,7 @@ public class ReceptionAchatService {
 
         // Remplir d'autres champs
         receptionAchat.setPriceHt(factureAchat.getPriceHt());
+        receptionAchat.setNomFichier("REC-" + factureAchat.getNumFacture() + ".pdf");
         receptionAchat.setTva(factureAchat.getTva());
         receptionAchat.setTaxe(factureAchat.getTaxe());
         receptionAchat.setNetApayer(factureAchat.getNetApayer());

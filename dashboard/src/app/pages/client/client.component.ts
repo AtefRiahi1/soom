@@ -25,6 +25,7 @@ export class ClientComponent {
     user: any;
     userType: string | null = '';
     private errorMessage: string = '';
+    crmPermissions: any;
   
     @ViewChild('add', { static: false }) add?: ModalDirective;
     @ViewChild('edit', { static: false }) edit?: ModalDirective;
@@ -101,12 +102,32 @@ export class ClientComponent {
         (data) => {
           this.user = data;
           this.getAllClient(data.entreprise.id);
+          this.crmPermissions = this.getCRMPermissions(data);
+  if (this.crmPermissions) {
+    console.log('CRM Permissions:', this.crmPermissions);
+    // You can use these permissions to control UI elements or functionality
+  } else {
+    console.log('No CRM module found for this user.');
+  }
         },
         (error) => {
           console.error('Error fetching worker data', error);
           this.errorMessage = 'Erreur lors de la récupération des données utilisateur. Veuillez réessayer plus tard.';
         }
       );
+    }
+
+    getCRMPermissions(user:any) {
+      const crmModule = user.modules.find(module => module.module.nom === 'CRM');
+      if (crmModule) {
+        return {
+          consulter: crmModule.consulter,
+          modifier: crmModule.modifier,
+          ajouter: crmModule.ajouter,
+          supprimer: crmModule.supprimer
+        };
+      }
+      return null; // or return default permissions if needed
     }
   
     getAllClient(idEnt:number): void {
