@@ -30,30 +30,28 @@ def recommend_modules(df):
     similarity_matrix = cosine_similarity(user_module_matrix.T)
     return similarity_matrix, module_indices
 
-def get_recommended_modules(module_id):
-    df = get_modules_data()  # Récupérer df ici
+def get_recommended_modules(module_id, threshold=0.1, limit=3):
+    df = get_modules_data()
     similarity_matrix, module_indices = recommend_modules(df)
 
-    # Vérifier si module_id existe dans les indices
     if module_id not in module_indices:
         return []
 
-    # Obtenir les modules auxquels l'employé actuel est associé
     current_employee_modules = df[df['module_id'] == module_id]['employe_id'].unique()
-    
-    # Filtrer les employés qui ont des modules en commun
     filtered_df = df[df['employe_id'].isin(current_employee_modules)]
-    
-    # Réexécuter la recommandation sur le DataFrame filtré
+
     if not filtered_df.empty:
         similarity_matrix, module_indices = recommend_modules(filtered_df)
 
         similar_modules = list(enumerate(similarity_matrix[module_indices[module_id]]))
         similar_modules = sorted(similar_modules, key=lambda x: x[1], reverse=True)
 
-        recommended_modules = [module for module, score in similar_modules if module_indices[module_id] != module]
+        # Filter modules based on threshold and exclude current module
+        recommended_modules = [
+            module for module, score in similar_modules
+            if score > threshold and module_indices[module_id] != module
+        ][:limit]  # Limit to the top N recommendations
 
-        # Convertir les modules recommandés en IDs de modules
         recommended_modules_ids = [list(module_indices.keys())[module] for module in recommended_modules]
 
         return recommended_modules_ids

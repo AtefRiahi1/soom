@@ -106,6 +106,7 @@ public class FactureAchatService {
             factureAchat.setNumFacture(updatedFactureAchat.getNumFacture());
             factureAchat.setProduits(updatedFactureAchat.getProduits());
             factureAchat.setTva(updatedFactureAchat.getTva());
+            factureAchat.setNomFichier(updatedFactureAchat.getNomFichier());
             calculateTotalPrice(factureAchat);
             calculatePriceHt(factureAchat);
             calculateTax(factureAchat);

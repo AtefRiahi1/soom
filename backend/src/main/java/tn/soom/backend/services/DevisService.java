@@ -54,6 +54,7 @@ public class DevisService {
             devis.setNumDevis(updatedDevis.getNumDevis());
             devis.setProduits(updatedDevis.getProduits());
             devis.setTva(updatedDevis.getTva());
+            devis.setNomFichier(updatedDevis.getNomFichier());
             calculateTotalPrice(devis);
             calculatePriceHt(devis);
             calculateTax(devis);

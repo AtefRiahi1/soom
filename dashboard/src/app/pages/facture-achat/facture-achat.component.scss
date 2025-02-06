@@ -1,0 +1,30 @@
+.plus-btn {
+    width: 24px;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 1px solid #2f2f3b;
+    color: #2f2f3b;
+}
+.moin-btn{
+    width: 24px;
+    border-radius: 5px;
+    background-color: transparent;
+    border: 1px solid red;
+    color: red;
+}
+.product-section {
+    border: 1px solid black; 
+    padding: 10px; 
+    margin-top: 10px; 
+}
+.dropdown-menu.show {
+    display: block;
+}
+.table-responsive {
+    overflow: visible; /* Prevents scrolling */
+}
+
+.dropdown-menu {
+    position: absolute; /* Ensures dropdown is positioned correctly */
+    z-index: 1000; /* Keeps dropdown above other elements */
+}

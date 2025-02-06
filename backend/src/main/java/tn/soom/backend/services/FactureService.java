@@ -156,6 +156,7 @@ public class FactureService {
             facture.setNumFacture(updatedFacture.getNumFacture());
             facture.setProduits(updatedFacture.getProduits());
             facture.setTva(updatedFacture.getTva());
+            facture.setNomFichier(updatedFacture.getNomFichier());
             calculateTotalPrice(facture);
             calculatePriceHt(facture);
             calculateTax(facture);

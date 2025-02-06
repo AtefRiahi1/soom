@@ -243,6 +243,7 @@ export class CommandeAchatComponent {
 
       this.commandeService.updateCommandeAchat(this.selectedCommande.id, formData, this.user.email).subscribe({
         next: () => {
+          this.saveedit();
           Swal.fire('Modifié!', "La commande a été modifiée.", 'success');
           this.getAllCommande(this.user.entreprise.id);
           this.edit?.hide();
@@ -324,6 +325,39 @@ export class CommandeAchatComponent {
     const supplierId = this.addForm.value.idFournisseur; // Get the supplier ID
     const vat = this.addForm.value.tva; // VAT from the form
     const products = this.addForm.value.produits; // Product array from the form
+  
+    // Retrieve supplier details
+    this.fournisseurService.getFournisseurById(supplierId).subscribe(supplier => {
+      // Create the PDF
+      const pdfContent = this.generatePdfContent(orderNumber, supplier, vat, products);
+      const pdfDoc = pdfMake.createPdf(pdfContent);
+      
+      pdfDoc.getBlob((blob: File) => {
+        this.attachementName = `${orderNumber}.pdf`;
+  
+        this.commandeService.uploadFile(blob, this.attachementName).subscribe(
+          (event: any) => {
+            // Handle upload success or progress here
+            console.log('File uploaded successfully', event);
+          },
+          (error) => {
+            if (error.status === 400) {
+              const errorMessage = error.error;
+              console.log(errorMessage);
+              alert(errorMessage);
+            }
+          }
+        );
+      });
+    });
+  }
+
+  saveedit(): void {
+    // Récupérer les valeurs du formulaire
+    const orderNumber = this.editForm.value.numCommande; // Use numCommande from the form
+    const supplierId = this.editForm.value.idFournisseur; // Get the supplier ID
+    const vat = this.editForm.value.tva; // VAT from the form
+    const products = this.editForm.value.produits; // Product array from the form
   
     // Retrieve supplier details
     this.fournisseurService.getFournisseurById(supplierId).subscribe(supplier => {

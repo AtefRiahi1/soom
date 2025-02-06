@@ -143,6 +143,7 @@ public class SortieService {
             sortie.setNumSortie(updatedSortie.getNumSortie());
             sortie.setProduits(updatedSortie.getProduits());
             sortie.setTva(updatedSortie.getTva());
+            sortie.setNomFichier(updatedSortie.getNomFichier());
             calculateTotalPrice(sortie);
             calculatePriceHt(sortie);
             calculateTax(sortie);

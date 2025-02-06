@@ -52,6 +52,8 @@ import { AchatComponent } from './achat/achat.component';
 import { VenteComponent } from './vente/vente.component';
 import { CommandeAchatComponent } from './commande-achat/commande-achat.component';
 import { ComachatfileComponent } from './comachatfile/comachatfile.component';
+import { FactureAchatComponent } from './facture-achat/facture-achat.component';
+import { FacachatfileComponent } from './facachatfile/facachatfile.component';
 
 
 @NgModule({
@@ -78,7 +80,9 @@ import { ComachatfileComponent } from './comachatfile/comachatfile.component';
          AchatComponent,
          VenteComponent,
          CommandeAchatComponent,
-         ComachatfileComponent
+         ComachatfileComponent,
+         FactureAchatComponent,
+         FacachatfileComponent
   ],
   imports: [
     CommonModule,

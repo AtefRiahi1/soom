@@ -106,6 +106,7 @@ public class CommandeService {
             commande.setNumCommande(updatedCommande.getNumCommande());
             commande.setProduits(updatedCommande.getProduits());
             commande.setTva(updatedCommande.getTva());
+            commande.setNomFichier(updatedCommande.getNomFichier());
             calculateTotalPrice(commande);
             calculatePriceHt(commande);
             calculateTax(commande);

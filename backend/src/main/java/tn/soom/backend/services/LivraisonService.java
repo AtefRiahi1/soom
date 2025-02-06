@@ -105,6 +105,7 @@ public class LivraisonService {
             livraison.setNumLivraison(updatedLivraison.getNumLivraison());
             livraison.setProduits(updatedLivraison.getProduits());
             livraison.setTva(updatedLivraison.getTva());
+            livraison.setNomFichier(updatedLivraison.getNomFichier());
             calculateTotalPrice(livraison);
             calculatePriceHt(livraison);
             calculateTax(livraison);

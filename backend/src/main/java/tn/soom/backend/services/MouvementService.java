@@ -50,14 +50,14 @@ public class MouvementService {
         }
 
         // Vérifier si la quantité en stock est suffisante pour une vente
-        if ("vente".equals(type) && article.getQuantite() < mouvement.getQuantite()) {
+        if ("VENTE".equals(type) && article.getQuantite() < mouvement.getQuantite()) {
             throw new RuntimeException("La quantité en stock n'est pas suffisante pour cette vente");
         }
 
         // Mettre à jour la quantité de l'article en fonction du type de mouvement
-        if ("achat".equals(type)) {
+        if ("ACHAT".equals(type)) {
             article.setQuantite(article.getQuantite() + mouvement.getQuantite());
-        } else if ("vente".equals(type)) {
+        } else if ("VENTE".equals(type)) {
             article.setQuantite(article.getQuantite() - mouvement.getQuantite());
         }
 

@@ -134,6 +134,7 @@ public class ReceptionAchatService {
             receptionAchat.setNumReception(updatedReceptionAchat.getNumReception());
             receptionAchat.setProduits(updatedReceptionAchat.getProduits());
             receptionAchat.setTva(updatedReceptionAchat.getTva());
+            receptionAchat.setNomFichier(updatedReceptionAchat.getNomFichier());
             calculateTotalPrice(receptionAchat);
             calculatePriceHt(receptionAchat);
             calculateTax(receptionAchat);

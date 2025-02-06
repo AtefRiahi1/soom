@@ -59,6 +59,7 @@ public class CommandeAchatService {
             commandeAchat.setProduits(updatedCommandeAchat.getProduits());
             commandeAchat.setTva(updatedCommandeAchat.getTva());
             commandeAchat.setDeliveryDate(updatedCommandeAchat.getDeliveryDate());
+            commandeAchat.setNomFichier(updatedCommandeAchat.getNomFichier());
             calculateTotalPrice(commandeAchat);
             calculatePriceHt(commandeAchat);
             calculateTax(commandeAchat);
