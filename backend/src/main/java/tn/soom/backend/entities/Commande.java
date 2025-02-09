@@ -35,7 +35,7 @@ public class Commande {
     private Entreprise entreprise;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "fournisseur_id")
+    @JoinColumn(name = "client_id")
     private Client client;
 
     @PrePersist

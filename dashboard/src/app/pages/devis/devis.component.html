@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <app-page-title title="Réception achats"></app-page-title>
+    <app-page-title title="Devis"></app-page-title>
     
     <div class="d-flex flex-column col-sm-12 col-md-4">
         <div class="search-box me-2 mb-2 d-inline-block">
@@ -54,6 +54,14 @@
                             <a *ngIf="crmPermissions?.supprimer" href="javascript:void(0);" class="text-danger" (click)="deleteModule(reception.id)">
                                 <i class="mdi mdi-delete font-size-18"></i>
                             </a>
+                            <div class="dropdown" (click)="toggleDropdown()">
+                              <button *ngIf="crmPermissions?.ajouter" class="btn btn-secondary" type="button">
+                                  ...
+                              </button>
+                              <ul class="dropdown-menu" [ngClass]="{'show': isDropdownOpen}">
+                                  <li><a class="dropdown-item" (click)="convertToCommande(reception)">Commande</a></li>
+                              </ul>
+                          </div>
 
                         </div>
                     </td>

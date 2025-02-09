@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import { saveAs } from 'file-saver';
 import  pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { CommandeService } from 'src/app/core/services/commande.service';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
@@ -47,7 +48,8 @@ export class DevisComponent {
     private entrepriseService: EntrepriseService,
             private employeService: EmployeService,
             private adminService: AdminSessionService,
-    private devisService: DevisService
+    private devisService: DevisService,
+    private commandeService:CommandeService
   ) {
     this.addForm = this.fb.group({
       numDevis: ['', Validators.required],
@@ -552,5 +554,195 @@ export class DevisComponent {
         }
         return null; // or return default permissions if needed
       }
+
+
+      convertToCommande(facture: any): void {
+          // Logic to convert the commande to a Facture Achat
+          console.log('Converting to Facture Achat for commande:', facture);
+          
+          // You may want to navigate to a different page or show a confirmation dialog
+          // Example: Navigating to a new route or opening a modal
+          this.commandeService.convertirDevisEnCommande(facture.id,this.user.email).subscribe({
+              next: (response) => {
+                  this.savecommande(response);
+                  Swal.fire('Succès!', 'Devis convertie en commande.', 'success');
+                  this.getAllDevis(this.user.entreprise.id); // Refresh the list if needed
+              },
+              error: (error) => {
+                  console.error('Error converting to Facture Achat', error);
+                  Swal.fire('Erreur!', 'Une erreur est survenue lors de la conversion.', 'error');
+              }
+          });
+        }
+        
+        toggleDropdown() {
+          this.isDropdownOpen = !this.isDropdownOpen;
+        }
+        
+        savecommande(reception:any): void {
+          // Récupérer les valeurs du formulaire
+          const factureNumber = reception.numCommande; // Use numCommande from the form
+          const supplierId = reception.client.id; // Get the supplier ID
+          const vat = reception.tva; // VAT from the form
+          const products = reception.produits; // Product array from the form
+        
+          // Retrieve supplier details
+          this.clientService.getClientById(supplierId).subscribe(supplier => {
+            // Create the PDF
+            const pdfContent = this.generatePdfContentreception(factureNumber, supplier, vat, products);
+            const pdfDoc = pdfMake.createPdf(pdfContent);
+            
+            pdfDoc.getBlob((blob: File) => {
+              this.attachementName = `${factureNumber}.pdf`;
+        
+              this.commandeService.uploadFile(blob, this.attachementName).subscribe(
+                (event: any) => {
+                  // Handle upload success or progress here
+                  console.log('File uploaded successfully', event);
+                },
+                (error) => {
+                  if (error.status === 400) {
+                    const errorMessage = error.error;
+                    console.log(errorMessage);
+                    alert(errorMessage);
+                  }
+                }
+              );
+            });
+          });
+        }
+        generatePdfContentreception(orderNumber: string, supplier: any, vat: number, products: any[]) {
+          const prixHorsTaxe = products.reduce((acc, product) => acc + product.quantite * product.prixUnitaire, 0);
+          const taxe = (prixHorsTaxe * vat) / 100;
+          const prixPayer = prixHorsTaxe + taxe;
+        
+          return {
+            content: [
+              {
+                text: 'Commande',
+                fontSize: 28,
+                bold: true,
+                alignment: 'center',
+                decoration: 'underline',
+                color: 'skyblue',
+                margin: [0, 20, 0, 20]
+              },
+              {
+                text: 'Informations de la Commande',
+                style: 'sectionHeader',
+                margin: [0, 10, 0, 10]
+              },
+              {
+                columns: [
+                  [
+                    { text: `Numéro de la commande : ${orderNumber}`, bold: true },
+                    { text: `Client : ${supplier.nom}`, bold: true },
+                    { text: `Email : ${supplier.email}` },
+                    { text: `Téléphone : ${supplier.tel}` },
+                    { text: `Adresse : ${supplier.adresse}` }
+                  ],
+                  [
+                    {
+                      text: `Date : ${new Date().toLocaleString()}`,
+                      alignment: 'right',
+                      italics: true
+                    }
+                  ]
+                ],
+                columnGap: 20
+              },
+              {
+                text: 'Détails de l\'Entreprise Acheteuse',
+                style: 'sectionHeader',
+                margin: [0, 20, 0, 10]
+              },
+              {
+                columns: [
+                  [
+                    { text: `Nom de l'Entreprise : ${this.user.entreprise.name}`, bold: true },
+                    { text: `Email : ${this.user.entreprise.email}` },
+                    { text: `Téléphone : ${this.user.entreprise.tel}` },
+                    { text: `Adresse : ${this.user.entreprise.address}` }
+                  ]
+                ],
+                columnGap: 20
+              },
+              {
+                text: 'Détails des Produits',
+                style: 'sectionHeader',
+                margin: [0, 20, 0, 10]
+              },
+              {
+                table: {
+                  headerRows: 1,
+                  widths: ['*', 'auto', 'auto'],
+                  body: [
+                    [
+                      { text: 'Nom de produit', style: 'tableHeader' },
+                      { text: 'Quantité', style: 'tableHeader' },
+                      { text: 'Prix (Dt)', style: 'tableHeader' }
+                    ],
+                    ...products.map(product => [
+                      product.nom,
+                      product.quantite,
+                      product.prixUnitaire.toFixed(2)
+                    ]),
+                    ['', '', { text: `Prix hors taxe : ${prixHorsTaxe.toFixed(2)} Dt`, style: 'tableTotal' }],
+                    ['', '', { text: `TVA : ${vat}%`, style: 'tableTotal' }],
+                    [{ text: 'Total à payer', colSpan: 2 }, {}, { text: `${prixPayer.toFixed(2)} Dt`, style: 'tableTotalValue' }]
+                  ]
+                },
+                layout: {
+                  hLineWidth: (i: number) => (i === 0 ? 1 : 0.5),
+                  vLineWidth: () => 0.5,
+                  hLineColor: () => '#000',
+                  fillColor: (rowIndex: number) => (rowIndex % 2 === 0 ? '#f5f5f5' : null),
+                  paddingLeft: () => 10,
+                  paddingRight: () => 10,
+                  paddingTop: () => 5,
+                  paddingBottom: () => 5
+                }
+              },
+              {
+                text: 'Remarques',
+                style: 'sectionHeader',
+                margin: [0, 20, 0, 10]
+              },
+              {
+                text: 'Merci pour votre confiance ! Si vous avez des questions, n’hésitez pas à nous contacter.',
+                italics: true,
+                margin: [0, 0, 0, 20],
+                alignment: 'center'
+              }
+            ],
+            styles: {
+              sectionHeader: {
+                bold: true,
+                fontSize: 16,
+                margin: [0, 15, 0, 15]
+              },
+              tableHeader: {
+                bold: true,
+                fontSize: 12,
+                color: '#ffffff',
+                fillColor: '#00305d',
+                margin: [0, 5, 0, 5]
+              },
+              tableTotal: {
+                fontSize: 10,
+                bold: true,
+                alignment: 'right',
+                margin: [0, 10, 0, 10],
+              },
+              tableTotalValue: {
+                fontSize: 10,
+                bold: true,
+                alignment: 'right',
+                margin: [0, 10, 0, 10],
+                color: '#00305d',
+              }
+            }
+          };
+        }
 
 }
