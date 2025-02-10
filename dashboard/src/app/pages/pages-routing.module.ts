@@ -25,6 +25,12 @@ import { ReceptionAchatComponent } from './reception-achat/reception-achat.compo
 import { RecepachatfileComponent } from './recepachatfile/recepachatfile.component';
 import { DevisComponent } from './devis/devis.component';
 import { DevisfileComponent } from './devisfile/devisfile.component';
+import { CommandeComponent } from './commande/commande.component';
+import { CommandefileComponent } from './commandefile/commandefile.component';
+import { LivraisonComponent } from './livraison/livraison.component';
+import { LivraisonfileComponent } from './livraisonfile/livraisonfile.component';
+import { FactureComponent } from './facture/facture.component';
+import { FacturefileComponent } from './facturefile/facturefile.component';
 
 
 
@@ -60,6 +66,12 @@ const routes: Routes = [
   { path: 'receptionachat/:filename/:ido', component: RecepachatfileComponent },
   { path: 'devis', component: DevisComponent },
   { path: 'devis/:filename/:ido', component: DevisfileComponent },
+  { path: 'commande', component: CommandeComponent },
+  { path: 'commande/:filename/:ido', component: CommandefileComponent },
+  { path: 'livraison', component: LivraisonComponent },
+  { path: 'livraison/:filename/:ido', component: LivraisonfileComponent },
+  { path: 'facture', component: FactureComponent },
+  { path: 'facture/:filename/:ido', component: FacturefileComponent },
 
   
 

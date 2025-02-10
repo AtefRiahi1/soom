@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <app-page-title title="Devis"></app-page-title>
+    <app-page-title title="Commande"></app-page-title>
     
     <div class="d-flex flex-column col-sm-12 col-md-4">
         <div class="search-box me-2 mb-2 d-inline-block">
@@ -18,7 +18,7 @@
         <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
             <thead class="table-light">
                 <tr>
-                    <th class="align-middle">Numéro de Devis</th>
+                    <th class="align-middle">Numéro de Commande</th>
                     <th class="align-middle">Client</th>
                     <th class="align-middle">Prix HT</th>
                     <th class="align-middle">TVA</th>
@@ -29,8 +29,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let reception of devis | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index">
-                    <td>{{ reception.numDevis }}</td>
+                <tr *ngFor="let reception of commandes | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index">
+                    <td>{{ reception.numCommande }}</td>
                     <td>{{ reception.client?.nom }}</td>
                     <td>{{ reception.priceHt }}</td>
                     <td>{{ reception.tva }}</td>
@@ -42,7 +42,7 @@
                         </a>
                     </td>
                     <td>
-                        <a (click)="onDownloadFile(reception.nomFichier,reception.numDevis)" class="list-group-item" style="cursor: pointer;">
+                        <a (click)="onDownloadFile(reception.nomFichier,reception.numCommande)" class="list-group-item" style="cursor: pointer;">
                             <i class="bx bx-download"></i>
                         </a>
                     </td>
@@ -59,7 +59,8 @@
                                   ...
                               </button>
                               <ul class="dropdown-menu" [ngClass]="{'show': isDropdownOpen}">
-                                  <li><a class="dropdown-item" (click)="convertToCommande(reception)">Commande</a></li>
+                                  <li><a class="dropdown-item" (click)="convertToLivraison(reception)">Livraison</a></li>
+                                  <li><a class="dropdown-item" (click)="convertToFacture(reception)">Facture</a></li>
                               </ul>
                           </div>
 
@@ -79,14 +80,14 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Ajouter un devis</h5>
+            <h5 class="modal-title">Ajouter une commande</h5>
             <button type="button" class="btn-close" (click)="add?.hide()"></button>
           </div>
           <div class="modal-body">
-            <form [formGroup]="addForm" (ngSubmit)="onAddDevis()">
+            <form [formGroup]="addForm" (ngSubmit)="onAddCommande()">
               <div class="mb-3">
-                <label for="numDevis" class="form-label">Numéro de devis</label>
-                <input formControlName="numDevis" class="form-control" id="numDevis" />
+                <label for="numCommande" class="form-label">Numéro de commande</label>
+                <input formControlName="numCommande" class="form-control" id="numCommande" />
               </div>
               <div class="mb-3">
                 <label for="clientId" class="form-label">Client</label>
@@ -137,14 +138,14 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Modifier un devis</h5>
+            <h5 class="modal-title">Modifier une commande</h5>
             <button type="button" class="btn-close" (click)="edit?.hide()"></button>
           </div>
           <div class="modal-body">
-            <form [formGroup]="editForm" (ngSubmit)="onUpdateDevis()">
+            <form [formGroup]="editForm" (ngSubmit)="onUpdateCommande()">
               <div class="mb-3">
-                <label for="numDevis" class="form-label">Numéro de devis</label>
-                <input formControlName="numDevis" class="form-control" id="numDevis" />
+                <label for="numCommande" class="form-label">Numéro de commande</label>
+                <input formControlName="numCommande" class="form-control" id="numCommande" />
               </div>
               <div class="mb-3">
                 <label for="clientId" class="form-label">Client</label>

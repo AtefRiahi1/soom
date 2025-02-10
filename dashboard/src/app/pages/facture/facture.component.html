@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <app-page-title title="Devis"></app-page-title>
+    <app-page-title title="Facture"></app-page-title>
     
     <div class="d-flex flex-column col-sm-12 col-md-4">
         <div class="search-box me-2 mb-2 d-inline-block">
@@ -18,23 +18,40 @@
         <table class="table align-middle table-nowrap dt-responsive nowrap w-100 table-check" id="order-list">
             <thead class="table-light">
                 <tr>
-                    <th class="align-middle">Numéro de Devis</th>
+                    <th class="align-middle">Numéro de facture</th>
                     <th class="align-middle">Client</th>
                     <th class="align-middle">Prix HT</th>
                     <th class="align-middle">TVA</th>
                     <th class="align-middle">Net à Payer</th>
+                    <th class="align-middle">Status</th>
                     <th class="align-middle">Aperçu</th>
                     <th class="align-middle">Télécharger</th>
                     <th class="align-middle">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let reception of devis | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index">
-                    <td>{{ reception.numDevis }}</td>
+                <tr *ngFor="let reception of factures | paginate: { itemsPerPage: itemsPerPage, currentPage: p }; let i = index">
+                    <td>{{ reception.numFacture }}</td>
                     <td>{{ reception.client?.nom }}</td>
                     <td>{{ reception.priceHt }}</td>
                     <td>{{ reception.tva }}</td>
                     <td>{{ reception.netApayer }}</td>
+                    <td>
+                        <div class="d-flex gap-3">
+                        <span class="badge badge-pill font-size-11"
+                              [ngClass]="{ 
+                                'badge-soft-warning': !reception.paye,
+                                'badge-soft-success': reception.paye
+                              }">
+                          {{reception.paye ? 'Payée' : 'En attente'}}
+                        </span>
+                        <a *ngIf="!reception.paye" 
+                       class="text-success" 
+                       (click)="verif(reception.id)">
+                        <i class="mdi mdi-cash font-size-18"></i>
+                    </a>               
+                      </div>
+                      </td>
                     
                     <td>
                         <a [routerLink]="[reception.nomFichier,reception.id]" class="list-group-item" style="cursor: pointer;">
@@ -42,7 +59,7 @@
                         </a>
                     </td>
                     <td>
-                        <a (click)="onDownloadFile(reception.nomFichier,reception.numDevis)" class="list-group-item" style="cursor: pointer;">
+                        <a (click)="onDownloadFile(reception.nomFichier,reception.numFacture)" class="list-group-item" style="cursor: pointer;">
                             <i class="bx bx-download"></i>
                         </a>
                     </td>
@@ -59,7 +76,7 @@
                                   ...
                               </button>
                               <ul class="dropdown-menu" [ngClass]="{'show': isDropdownOpen}">
-                                  <li><a class="dropdown-item" (click)="convertToCommande(reception)">Commande</a></li>
+                                  <li><a class="dropdown-item" (click)="convertToSortie(reception)">Sortie</a></li>
                               </ul>
                           </div>
 
@@ -79,14 +96,14 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Ajouter un devis</h5>
+            <h5 class="modal-title">Ajouter une facture</h5>
             <button type="button" class="btn-close" (click)="add?.hide()"></button>
           </div>
           <div class="modal-body">
-            <form [formGroup]="addForm" (ngSubmit)="onAddDevis()">
+            <form [formGroup]="addForm" (ngSubmit)="onAddFacture()">
               <div class="mb-3">
-                <label for="numDevis" class="form-label">Numéro de devis</label>
-                <input formControlName="numDevis" class="form-control" id="numDevis" />
+                <label for="numFacture" class="form-label">Numéro de facture</label>
+                <input formControlName="numFacture" class="form-control" id="numFacture" />
               </div>
               <div class="mb-3">
                 <label for="clientId" class="form-label">Client</label>
@@ -137,14 +154,14 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Modifier un devis</h5>
+            <h5 class="modal-title">Modifier une facture</h5>
             <button type="button" class="btn-close" (click)="edit?.hide()"></button>
           </div>
           <div class="modal-body">
-            <form [formGroup]="editForm" (ngSubmit)="onUpdateDevis()">
+            <form [formGroup]="editForm" (ngSubmit)="onUpdateFacture()">
               <div class="mb-3">
-                <label for="numDevis" class="form-label">Numéro de devis</label>
-                <input formControlName="numDevis" class="form-control" id="numDevis" />
+                <label for="numFacture" class="form-label">Numéro de facture</label>
+                <input formControlName="numFacture" class="form-control" id="numFacture" />
               </div>
               <div class="mb-3">
                 <label for="clientId" class="form-label">Client</label>
