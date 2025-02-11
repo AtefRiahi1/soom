@@ -31,6 +31,8 @@ import { LivraisonComponent } from './livraison/livraison.component';
 import { LivraisonfileComponent } from './livraisonfile/livraisonfile.component';
 import { FactureComponent } from './facture/facture.component';
 import { FacturefileComponent } from './facturefile/facturefile.component';
+import { SortieComponent } from './sortie/sortie.component';
+import { SortiefileComponent } from './sortiefile/sortiefile.component';
 
 
 
@@ -72,6 +74,8 @@ const routes: Routes = [
   { path: 'livraison/:filename/:ido', component: LivraisonfileComponent },
   { path: 'facture', component: FactureComponent },
   { path: 'facture/:filename/:ido', component: FacturefileComponent },
+  { path: 'sortie', component: SortieComponent },
+  { path: 'sortie/:filename/:ido', component: SortiefileComponent },
 
   
 

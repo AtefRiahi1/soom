@@ -64,6 +64,8 @@ import { LivraisonComponent } from './livraison/livraison.component';
 import { LivraisonfileComponent } from './livraisonfile/livraisonfile.component';
 import { FactureComponent } from './facture/facture.component';
 import { FacturefileComponent } from './facturefile/facturefile.component';
+import { SortieComponent } from './sortie/sortie.component';
+import { SortiefileComponent } from './sortiefile/sortiefile.component';
 
 
 @NgModule({
@@ -102,7 +104,9 @@ import { FacturefileComponent } from './facturefile/facturefile.component';
          LivraisonComponent,
          LivraisonfileComponent,
          FactureComponent,
-         FacturefileComponent
+         FacturefileComponent,
+         SortieComponent,
+         SortiefileComponent
   ],
   imports: [
     CommonModule,
